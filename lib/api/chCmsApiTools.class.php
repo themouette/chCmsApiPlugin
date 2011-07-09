@@ -94,7 +94,6 @@ class chCmsApiTools
         }
         break;
       case 'xml':
-        $response->setContentType('xml');
         $result = self::array_to_xml(
                     $results,
                     new SimpleXMLElement(sprintf(

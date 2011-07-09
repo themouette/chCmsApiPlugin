@@ -4,7 +4,7 @@ require $pluginDir . '/test/bootstrap/unit.php';
 require $pluginDir . '/../chCmsBasePlugin/lib/pluginchCmsActions.class.php';
 require $pluginDir . '/../../lib/chCmsActions.class.php';
 
-$t = new lime_test(8, new lime_output_color());
+$t = new lime_test(10, new lime_output_color());
 
 // create a fake action for tests
 class testApiAction extends chCmsApiActions
@@ -37,10 +37,13 @@ try
 catch (chCmsError406Exception $e)
 {
   $t->pass('a chCmsError406Exception was thrown');
-  $message = unserialize($e->getMessage());
   $t->is_deeply(
-    $message,
-    array('error' => array('code' => 'code', 'message' => 'message')),
+    array(
+      'code' => $e->getApiCode(),
+      'message' => $e->getMessage()),
+    array(
+      'code' => 'code',
+      'message' => 'message'),
     'returned error is what expected');
 }
 catch(Exception $e)
@@ -56,10 +59,15 @@ try
 catch (chCmsError406Exception $e)
 {
   $t->pass('a chCmsError406Exception was thrown');
-  $message = unserialize($e->getMessage());
   $t->is_deeply(
-    $message,
-    array('error' => array('code' => 'code', 'message' => 'message', 'parameters' => 'params')),
+    array(
+      'code' => $e->getApiCode(),
+      'message' => $e->getMessage(),
+      'parameters' => $e->getParameters()),
+    array(
+      'code' => 'code',
+      'message' => 'message',
+      'parameters' => 'params'),
     'returned error is what expected');
 }
 catch(Exception $e)
@@ -76,6 +84,16 @@ try
 catch (chCmsError406Exception $e)
 {
   $t->pass('action was redirected');
+  $t->is_deeply(
+    array(
+      'code' => $e->getApiCode(),
+      'message' => $e->getMessage(),
+      'parameters' => $e->getParameters()),
+    array(
+      'code' => 'code',
+      'message' => 'message',
+      'parameters' => 'params'),
+    'returned error is what expected');
 }
 catch(Exception $e)
 {
@@ -105,6 +123,16 @@ try
 catch (chCmsError406Exception $e)
 {
   $t->pass('action was redirected');
+  $t->is_deeply(
+    array(
+      'code' => $e->getApiCode(),
+      'message' => $e->getMessage(),
+      'parameters' => $e->getParameters()),
+    array(
+      'code' => 'code',
+      'message' => 'message',
+      'parameters' => 'params'),
+    'returned error is what expected');
 }
 catch(Exception $e)
 {

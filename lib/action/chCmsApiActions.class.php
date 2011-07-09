@@ -34,7 +34,10 @@ abstract class chCmsApiActions extends chCmsActions
     $response = $this->getResponse();
     $response->setStatusCode($statusCode);
 
-    return $this->renderText($this->formatResult($result));
+    $this->renderText($this->formatResult($result));
+
+    $response->send();
+    throw new sfStopException();
   }
 
   /**
@@ -42,7 +45,7 @@ abstract class chCmsApiActions extends chCmsActions
    *
    * @param boolean $condition    condition to check.
    * @param Integer $errorCode    error code to return to funambol.
-   * @param String  $errorMessage error message to ease debugging.
+   * @parram String  $errorMessage error message to ease debugging.
    * @param array   $parameters   extra parameters to return to funambol.
    * @return void
    * @author Julien Muetton <julien_muetton@carpe-hora.com>
@@ -69,7 +72,7 @@ abstract class chCmsApiActions extends chCmsActions
    **/
   public function forward406Unless($condition, $errorMessage, $errorCode = null, $parameters = null)
   {
-    return $this->forward406If(!$condition, $errorMessage, $errorCode = null, $parameters);
+    return $this->forward406If(!$condition, $errorMessage, $errorCode, $parameters);
   }
 
   /**
@@ -83,30 +86,10 @@ abstract class chCmsApiActions extends chCmsActions
    **/
   public function forward406($errorMessage, $errorCode = null, $parameters = null)
   {
-    throw new chCmsError406Exception($this->get406Message($errorMessage, $errorCode, $parameters));
-  }
-
-  /**
-   * computes error message for a 406 error
-   *
-   * @param Integer $errorCode    error code to return to funambol.
-   * @param String  $errorMessage error message to ease debugging.
-   * @param array   $parameters   extra parameters to return to funambol.
-   * @return String
-   * @author Julien Muetton <julien_muetton@carpe-hora.com>
-   **/
-  protected function get406Message($errorMessage, $errorCode = null, $parameters = null)
-  {
-    $result = array(
-      'code'    => is_null($errorCode) ? $this->getDefaultErrorCode() : $errorCode,
-      'message' => $errorMessage);
-
-    if (!is_null($parameters))
-    {
-      $result['parameters'] = $parameters;
-    }
-
-    return $this->formatResult(array('error' => $result));
+    throw new chCmsError406Exception(
+          $errorMessage,
+          is_null($errorCode) ? $this->getDefaultErrorCode() : $errorCode,
+          $parameters);
   }
 
   /**
@@ -120,7 +103,6 @@ abstract class chCmsApiActions extends chCmsActions
   {
     if (is_null($result))
     {
-      chCmsApiTools::setResponseContentType($this->getRequest(), $this->getResponse());
       return '';
     }
     return chCmsApiTools::formatResultForRequest($result, $this->getRequest(), $this->getResponse());

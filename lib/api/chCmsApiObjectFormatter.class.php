@@ -56,7 +56,7 @@ class chCmsApiObjectFormatter
   {
     if (!is_array($collection) && is_callable(array($collection, 'toArray')))
     {
-      $colection = $collection->toArray(null, null, BasePeer::TYPE_FIELDNAME, true);
+      $collection = $collection->toArray(null, null, BasePeer::TYPE_FIELDNAME, true);
     }
 
     $results = array();

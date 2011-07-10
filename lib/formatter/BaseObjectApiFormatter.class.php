@@ -14,7 +14,7 @@
  * To declare a formatter, just extend this class and setDefaultFormatFields
  * in the initialize method.
  */
-abstract class BaseObjectApiFormatter
+class BaseObjectApiFormatter
 {
   protected $formatFields;
 
@@ -49,17 +49,44 @@ abstract class BaseObjectApiFormatter
   /**
    * retriev formatFields
    *
-   * @param array|null $format fields to use to override current fields
+   * @param array|null $extension fields to extend current fields with
    * @return array
    **/
-  public function getFormatFields($formatFields = null)
+  public function getFormatFields($extension = null)
   {
-    if (!is_null($formatFields))
+    if (!is_null($extension))
     {
-      $this->setDefaultFormatFields($formatFields);
-      return $formatFields;
+      $this->setDefaultFormatFields($extension);
+      return $this->mergeFieldsArray($extension);
     }
     return $this->formatFields;
+  }
+
+  /**
+   * add fields to format
+   *
+   * @return BaseObjectApiFormatter
+   **/
+  public function mergeFormatFields($formatFields)
+  {
+    $this->setFormatFields($this->mergeFieldsArray($formatFields));
+
+    return $this;
+  }
+
+  /**
+   * merge fields array
+   *
+   * @return array
+   **/
+  protected function mergeFieldsArray($fields = array())
+  {
+    $fields = is_array($fields) ? $fields : array();
+    if (!is_null($fields))
+    {
+      $this->setDefaultFormatFields($fields);
+    }
+    return array_merge($this->getFormatFields(), $fields);
   }
 
   /**
@@ -88,7 +115,25 @@ abstract class BaseObjectApiFormatter
    **/
   public function formatObject($object, $formatFields = null)
   {
-    return chCmsApiObjectFormatter::formatObject($object, $this->getFormatFields($formatFields));
+    $formatFields = $this->mergeFieldsArray($formatFields);
+    $object = $this->objectToArray($object);
+
+    $result = array();
+    foreach ($formatFields as $id => $key)
+    {
+      if (is_array($key) || $key instanceof BaseObjectApiFormatter)
+      {
+        $formatter  = is_array($key) ? new BaseObjectApiFormatter($key) : $key;
+        $result[$id] = $formatter->formatCollection(isset($object[$id]) ? $object[$id] : array());
+      }
+      else
+      {
+        // assume this is a sacalar value
+        $result[$key] = isset($object[$key]) ? $object[$key] : null;
+      }
+    }
+
+    return $result;
   }
 
   /**
@@ -100,6 +145,39 @@ abstract class BaseObjectApiFormatter
    **/
   public function formatCollection($collection, $formatFields = null)
   {
-    return chCmsApiObjectFormatter::formatCollection($collection, $this->getFormatFields($formatFields));
+    foreach ($collection as $key => $object)
+    {
+      $result[$key] = $this->formatObject($object, $formatFields);
+    }
+
+    return $result;
+  }
+
+  /**
+   * transform object to key value array.
+   *
+   * @param Object $object object to transform.
+   * @return array
+   **/
+  public function objectToArray($object)
+  {
+    if (is_array($object))
+    {
+      return $object;
+    }
+
+    if (is_callable(array($object, 'toArray')))
+    {
+      return $object->toArray(BasePeer::TYPE_FIELDNAME, true, array(), true);
+    }
+
+    // it has to be iterable
+    $result = array();
+    foreach ($object as $key => $value)
+    {
+      $result[$key] = $value;
+    }
+
+    return $result;
   }
 } // END OF BaseObjectFormatter

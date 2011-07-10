@@ -55,19 +55,7 @@ class chCmsApiTools
    **/
   static public function setResponseContentType($request, $response)
   {
-    switch ($request->getRequestFormat())
-    {
-      case 'json':
-      case 'jsonp':
-        $response->setContentType('application/json');
-        break;
-      case 'xml':
-        $response->setContentType('text/xml');
-        break;
-      default:
-        // let default process
-        return false;
-    }
+    $response->setContentTypeForFormat($request->getRequestFormat());
   }
 
   /**

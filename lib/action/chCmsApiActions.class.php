@@ -22,6 +22,27 @@ abstract class chCmsApiActions extends chCmsActions
   abstract public function getDefaultErrorCode();
 
   /**
+   * validate request against $paramValidator.
+   * $paramValidator should match chCmsApiParamValidator inteface.
+   *
+   * @param chCmsApiParamValidator|sfForm $paramValidator validator for this request.
+   * @return void
+   **/
+  public function validateRequest($paramValidator)
+  {
+    $request = $this->getRequest();
+    $paramValidator->bind($request->getParameterHolder()->getAll());
+    if (!$paramValidator->isValid())
+    {
+      $this->forward406($paramValidator->getErrorMessage(), $paramValidator->getErrorCode(), $paramValidator->getErrorParameters());
+    }
+
+    // replace request parameters.
+    // to access raw parameters, extract it before.
+    $request->getParameterHolder()->add($paramValidator->getValues());
+  }
+
+  /**
    * render given result in requested format
    *
    * @param mixed $result     result to return
@@ -33,9 +54,7 @@ abstract class chCmsApiActions extends chCmsActions
     // set status code
     $response = $this->getResponse();
     $response->setStatusCode($statusCode);
-
-    $this->renderText($this->formatResult($result));
-
+    $response->setApiResultContent($this->preprocessResult($result), $this->getRequest());
     $response->send();
     throw new sfStopException();
   }
@@ -99,12 +118,8 @@ abstract class chCmsApiActions extends chCmsActions
    * @return String
    * @author Julien Muetton <julien_muetton@carpe-hora.com>
    **/
-  protected function formatResult($result)
+  protected function preprocessResult($result)
   {
-    if (is_null($result))
-    {
-      return '';
-    }
-    return chCmsApiTools::formatResultForRequest($result, $this->getRequest(), $this->getResponse());
+    return $result;
   }
 } // END OF chCmsApiActions

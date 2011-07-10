@@ -26,32 +26,39 @@ class PluginChCmsApiFilter extends sfFilter
     {
       try
       {
-        $this->setContentTypeFromRequest();
+        $response = $this->getContext()->getResponse();
+        $request  = $this->getContext()->getRequest();
+
+        $response->setContentTypeForFormat($request->getRequestFormat());
 
         $filterChain->execute();
       }
       catch (chCmsError406Exception $e)
       {
-        $response = $this->getContext()->getResponse();
         $response->setStatusCode('406');
-        $response->setContent(chCmsApiTools::formatResultForRequest($this->getErrorArray($e), $this->context->getRequest(), $response));
+        $response->setApiResultContent($this->getErrorArray($e), $request);
+      }
+      catch (chCmsError401Exception $e)
+      {
+        $response->setStatusCode('401');
+        if ($this->getContext()->getUser()->isAuthenticated())
+        {
+          $response->setApiResultContent(array('error' => array(
+            'code'    => 'INSUFFICIENT_CREDENTIAL',
+            'message' => 'this ressource is protected') ), $request);
+        }
+        else
+        {
+          $response->setApiResultContent(array('error' => array(
+            'code'    => 'AUTHENTICATION_REQUIRED',
+            'message' => 'this ressource is protected, please sign in') ), $request);
+        }
       }
     }
     else
     {
       $filterChain->execute();
     }
-  }
-
-  /**
-   * set the response content type from request
-   * @todo use a notifyUntil event to allow more types registration
-   *
-   * @return void
-   **/
-  protected function setContentTypeFromRequest()
-  {
-    chCmsApiTools::setResponseContentType($this->context->getRequest(), $this->context->getResponse());
   }
 
   /**

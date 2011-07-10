@@ -36,7 +36,7 @@ class PluginchCmsApiParamValidator extends BaseForm
     {
       return null;
     }
-    return 'ERROR_CODE';
+    return 'INVALID_PARAMETERS';
   }
 
   /**
@@ -50,7 +50,7 @@ class PluginchCmsApiParamValidator extends BaseForm
     {
       return null;
     }
-    return $this->getFormattedErrors();
+    return 'given parameters are invalid.';
   }
 
   /**
@@ -64,6 +64,37 @@ class PluginchCmsApiParamValidator extends BaseForm
     {
       return null;
     }
-    return array();
+
+    $errors = array();
+
+    if ($this->hasGlobalErrors())
+    {
+      $errors['global'] = array();
+
+      // global errors
+      foreach ($this->getGlobalErrors() as $validator_error)
+      {
+        $errors['global'][] = $validator_error->getMessage();
+      }
+    }
+
+    // iterate over fields
+    foreach ($this->getErrorSchema() as $field_name => $error_obj)
+    {
+      if ($error_obj instanceof sfValidatorErrorSchema)
+      {
+        $errors[$field_name] = array();
+        foreach ($error_obj as $error)
+        {
+          $errors[$field_name][] = $error->getMessage();
+        }
+      }
+      else
+      {
+        $errors[$field_name] = $error_obj->getMessage();
+      }
+    }
+
+    return $errors;
   }
 } // END OF PluginchCmsApiParamValidator

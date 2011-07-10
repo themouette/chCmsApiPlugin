@@ -17,6 +17,14 @@ class chCmsApiPluginConfiguration extends sfPluginConfiguration
    */
   public function initialize()
   {
+    $this->dispatcher->connect(
+        'request.method_not_found',
+        array('chCmsApiPluginRequest', 'methodNotFound'));
+
+    $this->dispatcher->connect(
+        'response.method_not_found',
+        array('chCmsApiPluginResponse', 'methodNotFound'));
+
     /*
     keep just in case
     $this->dispatcher->connect(

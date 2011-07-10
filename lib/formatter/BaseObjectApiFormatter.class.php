@@ -145,6 +145,7 @@ class BaseObjectApiFormatter
    **/
   public function formatCollection($collection, $formatFields = null)
   {
+    $result = array();
     foreach ($collection as $key => $object)
     {
       $result[$key] = $this->formatObject($object, $formatFields);

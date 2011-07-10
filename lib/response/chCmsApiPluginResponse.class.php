@@ -175,7 +175,7 @@ class chCmsApiPluginResponse
    * @return void
    * @author Julien Muetton <julien_muetton@carpe-hora.com>
    **/
-  public static function processApiXmlValue($sf_response, $result, $document, $defaultKey = 'result')
+  public static function processApiXmlValue($sf_response, $result, $document, $default_key = 'result')
   {
     if (is_array($result) || is_object($result))
     {
@@ -189,7 +189,7 @@ class chCmsApiPluginResponse
     }
     else
     {
-      $document->addChild($defaultKey, $result);
+      $document->addChild($default_key, $result);
     }
   }
 } // END OF chCmsApiPluginResponse

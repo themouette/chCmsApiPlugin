@@ -97,4 +97,30 @@ class PluginchCmsApiParamValidator extends BaseForm
 
     return $errors;
   }
+
+  /**
+   * is there an error for $paramName
+   *
+   * @return bool
+   **/
+  public function hasParameterError($paramName, $error_type = null)
+  {
+    $error_schema = $this->getErrorSchema();
+    if (!isset($error_schema[$paramName]))
+    {
+      return false;
+    }
+
+    $error = $error_schema[$paramName];
+
+    if (  is_null($error_type) ||
+        (($error instanceof sfValidatorErrorSchema) && isset($error[$error_type])) ||
+          $error_type == $error->getCode()
+        )
+    {
+      return true;
+    }
+
+    return false;
+  }
 } // END OF PluginchCmsApiParamValidator

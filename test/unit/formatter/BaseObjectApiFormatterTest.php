@@ -1,7 +1,7 @@
 <?php
 include dirname(__FILE__) . '/../../bootstrap/unit.php';
 
-$t = new lime_test(16, new lime_output_color());
+$t = new ApiFormatterTester(16, new lime_output_color());
 
 class TestObjectFormatter extends BaseObjectApiFormatter
 {
@@ -24,14 +24,14 @@ $t->is_deeply(array('foo', 'bar'), $formatter->getFormatFields(), 'constructor p
 $t->diag('check formatObject');
 $obj = array('toto' => 'toto', 'foo' => 'FOO', 'bar' => 'BAR');
 $formatter = new TestObjectFormatter();
-$t->is_deeply($formatter->formatObject($obj),
+$t->compare_object($formatter->formatObject($obj),
               array('toto' => 'toto'),
               'format with default value');
-$t->is_deeply($formatter->formatObject($obj, array('foo')),
+$t->compare_object($formatter->formatObject($obj, array('foo')),
               array('toto' => 'toto', 'foo' => 'FOO'),
               'format with extend parameters by method');
 $formatter = new TestObjectFormatter(array('foo', 'bar'));
-$t->is_deeply($formatter->formatObject($obj),
+$t->compare_object($formatter->formatObject($obj),
               array('foo' => 'FOO', 'bar' => 'BAR'),
               'format with overriden parameters by constructor');
 
@@ -42,7 +42,7 @@ $collection = array(
   array('toto' => 'toto2', 'foo' => 'FOO2', 'bar' => 'BAR2'),
   array('toto' => 'toto3', 'foo' => 'FOO3', 'bar' => 'BAR3'),
   array('toto' => 'toto4', 'foo' => 'FOO4', 'bar' => 'BAR4'));
-$t->is_deeply($formatter->formatCollection($collection),
+$t->compare_collection($formatter->formatCollection($collection),
   array(
     array('toto' => 'toto1'),
     array('toto' => 'toto2'),
@@ -50,7 +50,7 @@ $t->is_deeply($formatter->formatCollection($collection),
     array('toto' => 'toto4'),),
   'collection are formatted as expected');
 
-$t->is_deeply($formatter->formatCollection($collection, array('bar')),
+$t->compare_collection($formatter->formatCollection($collection, array('bar')),
   array(
     array('toto' => 'toto1', 'bar' => 'BAR1'),
     array('toto' => 'toto2', 'bar' => 'BAR2'),
@@ -58,7 +58,7 @@ $t->is_deeply($formatter->formatCollection($collection, array('bar')),
     array('toto' => 'toto4', 'bar' => 'BAR4')),
   'formatter fields can be extended by method');
 
-$t->is_deeply($formatter->formatCollection($collection),
+$t->compare_collection($formatter->formatCollection($collection),
   array(
     array('toto' => 'toto1'),
     array('toto' => 'toto2'),
@@ -67,7 +67,7 @@ $t->is_deeply($formatter->formatCollection($collection),
   'formatter fields where not overriden');
 
 $formatter = new TestObjectFormatter(array('foo', 'bar'));
-$t->is_deeply($formatter->formatCollection($collection),
+$t->compare_collection($formatter->formatCollection($collection),
   array(
     array('foo' => 'FOO1', 'bar' => 'BAR1'),
     array('foo' => 'FOO2', 'bar' => 'BAR2'),
@@ -80,7 +80,7 @@ $obj = array('a', 'b', 'c', 'd', 'toto' => array(
                 1 => array('e', 'f', 'g'),
                 3 => array('h', 'i', 'j', 'k')));
 $formatter = new TestObjectFormatter(array(0, 'toto' => array(0, 3)));
-$t->is_deeply($formatter->formatObject($obj),
+$t->compare_object($formatter->formatObject($obj),
               array('a', 'toto' => array(
                   1 => array('e', 3 => null),
                   3 => array('h', 3 => 'k'))),
@@ -93,7 +93,7 @@ $obj = array('a', 'b', 'c', 'd', 'toto' => array(
 $formatter = new TestObjectFormatter(array(0, 'toto' => array(0, 3)));
 $formatter->mergeFormatFields(array(1));
 $t->is_deeply($formatter->getFormatFields(), array(0, 1, 'toto' => array(0, 3)), 'merged fields are persistants');
-$t->is_deeply($formatter->formatObject($obj),
+$t->compare_object($formatter->formatObject($obj),
               array('a', 'b', 'toto' => array(
                   1 => array('e', 3 => null),
                   3 => array('h', 3 => 'k'))),
@@ -104,7 +104,7 @@ $obj = array('a', 'b', 'c', 'd', 'toto' => array(
                 1 => array('e', 'f', 'g'),
                 3 => array('h', 'i', 'j', 'k')));
 $formatter = new TestObjectFormatter(array(0, 'toto' => array(0, 3)));
-$t->is_deeply($formatter->formatObject($obj, array(1)),
+$t->compare_object($formatter->formatObject($obj, array(1)),
               array('a', 'b', 'toto' => array(
                   1 => array('e', 3 => null),
                   3 => array('h', 3 => 'k'))),
@@ -118,7 +118,7 @@ $formatter = new TestObjectFormatter(array(
       0,
       1,
       'toto' => new TestObjectFormatter(array(0,3))));
-$t->is_deeply($formatter->formatObject($obj, array(1)),
+$t->compare_object($formatter->formatObject($obj, array(1)),
               array('a', 'b', 'toto' => array(
                   1 => array('e', 3 => null),
                   3 => array('h', 3 => 'k'))),

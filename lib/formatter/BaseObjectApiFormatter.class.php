@@ -118,18 +118,18 @@ class BaseObjectApiFormatter
     $formatFields = $this->mergeFieldsArray($formatFields);
     $object = $this->objectToArray($object);
 
-    $result = array();
+    $result = new stdClass();
     foreach ($formatFields as $id => $key)
     {
       if (is_array($key) || $key instanceof BaseObjectApiFormatter)
       {
         $formatter  = is_array($key) ? new BaseObjectApiFormatter($key) : $key;
-        $result[$id] = $formatter->formatCollection(isset($object[$id]) ? $object[$id] : array());
+        $result->$id = $formatter->formatCollection(isset($object[$id]) ? $object[$id] : array());
       }
       else
       {
         // assume this is a sacalar value
-        $result[$key] = isset($object[$key]) ? $object[$key] : null;
+        $result->$key = isset($object[$key]) ? $object[$key] : null;
       }
     }
 

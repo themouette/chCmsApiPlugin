@@ -184,6 +184,7 @@ class chCmsApiObjectFormatter extends BasechCmsApiFormatter implements ArrayAcce
    **/
   public function format($object, $fields = array())
   {
+    // in case a simple formatter is given to handle collection
     if (is_array($object) || ($object instanceof PropelCollection))
     {
       return $this->formatCollection($object, $fields);
@@ -224,6 +225,21 @@ class chCmsApiObjectFormatter extends BasechCmsApiFormatter implements ArrayAcce
     $objectFormatter = clone($this);
     $objectFormatter->mergeFormatFields($fields);
     $formatter = new chCmsApiCollectionFormatter($objectFormatter, $options);
+    return $formatter->format($collection);
+  }
+
+  /**
+   * format a pager.
+   *
+   * @param PropelPager  $pager    collection to format
+   * @param array|null   $fields   fields to use
+   * @return array
+   */
+  public function formatPager($pager, $fields = array())
+  {
+    $objectFormatter = clone($this);
+    $objectFormatter->mergeFormatFields($fields);
+    $formatter = new chCmsApiPagerFormatter($objectFormatter, $options);
     return $formatter->format($collection);
   }
 

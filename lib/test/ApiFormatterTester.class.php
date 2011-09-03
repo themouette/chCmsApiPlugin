@@ -92,11 +92,11 @@ class ApiFormatterTester extends lime_test
         $this->set_last_test_errors(array(
           sprintf("  > comparing object \"%s\"'s key (numeric : %s) :", $key, is_numeric($key) ? $num_key : 'NULL'),
           sprintf("           got: %s", str_replace("\n", '', var_export($value, true))),
-          sprintf("      expected: %s", str_replace("\n", '', array_key_exists($num, $reference_object)
+          sprintf("      expected: %s", str_replace("\n", '', array_key_exists($key, $reference_object)
                                                               ? var_export($reference_object[$key], true)
-                                                              : is_numeric($key) && array_key_exists($num_key, $reference_object)
-                                                                  ? var_export($reference_object[$num_key], true)
-                                                                  : '"undefined"')))
+                                                              : ((is_numeric($key) && array_key_exists((int)$key, $reference_object))
+                                                                  ? var_export($reference_object[(int)$key], true)
+                                                                  : '"undefined"'))))
         );
         throw new ApiFormatterTesterException();
       }
@@ -134,6 +134,15 @@ class ApiFormatterTester extends lime_test
 
     foreach ($test_collection as $key => $test_object)
     {
+      if (!isset($reference_collection[$key]))
+      {
+        $this->set_last_test_errors(array(
+          sprintf("  > unknown property %s :", $key),
+          sprintf("           got: %s", str_replace("\n", '', var_export($test_collection, true))),
+          sprintf("      expected: %s", str_replace("\n", '', var_export($reference_collection, true))))
+        );
+        throw new ApiFormatterTesterException();
+      }
       $this->internal_compare_object($test_object, $reference_collection[$key]);
     }
   }

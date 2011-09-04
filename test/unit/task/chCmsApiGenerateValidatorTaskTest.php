@@ -19,7 +19,7 @@ $t->diag('method getValidatorClassname');
 $task = new TestchCmsApiGenerateValidatorTask();
 $t->is($task->getValidatorClassname('class'), 'classValidator', 'append "Validator" to class name');
 $t->is($task->getValidatorClassname('classValidator'), 'classValidator', 'do not append "Validator" if already there');
-$t->is($task->getValidatorClassname('Validatorclass'), 'ValidatorclassValidator', 'append "Validator" if not at the end');
+$t->is($task->getValidatorClassname('Validatorclass'), 'Validatorclass', 'do not append "Validator" if not at the end');
 
 $t->diag('method getGenerationLibPath');
 $t->is($task->getGenerationLibPath(array(), array()), sfConfig::get('sf_lib_dir'). '/validator', '"lib/validator" is default destination');

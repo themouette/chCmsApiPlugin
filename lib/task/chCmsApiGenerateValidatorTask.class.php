@@ -120,7 +120,7 @@ EOF;
 
   protected function getValidatorClassname($name)
   {
-    if (!preg_match('#Validator$#', $name))
+    if (!preg_match('#Validator#', $name))
     {
       return sprintf('%sValidator', $name);
     }

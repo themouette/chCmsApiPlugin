@@ -1,6 +1,6 @@
 <?php
 /**
- * This file declare the chCmsApiGenerateValidatorTask class.
+ * This file declare the chCmsApiGenerateParamValidatorTask class.
  *
  * @package chCmsApiPlugin
  * @subpackage task
@@ -12,7 +12,7 @@
 /**
  * task generating formatter classes
  */
-class chCmsApiGenerateValidatorTask extends sfGeneratorBaseTask
+class chCmsApiGenerateParamValidatorTask extends sfGeneratorBaseTask
 {
   public function configure()
   {
@@ -21,7 +21,7 @@ class chCmsApiGenerateValidatorTask extends sfGeneratorBaseTask
     ));
 
     $this->addOptions(array(
-      new sfCommandOption('base-class', null, sfCommandOption::PARAMETER_REQUIRED, 'The base class to extend from', 'chCmsApiParamValidator'),
+      new sfCommandOption('base-class', null, sfCommandOption::PARAMETER_REQUIRED, 'The base class to extend from', 'chCmsApiParamParamValidator'),
       new sfCommandOption('plugin', null, sfCommandOption::PARAMETER_REQUIRED, 'The plugin to generate class in', null),
     ));
 
@@ -34,42 +34,41 @@ class chCmsApiGenerateValidatorTask extends sfGeneratorBaseTask
 The [chCms:generate-validator|INFO] task creates a validator for given model.
 It is possible to provide [base-class|INFO] and [plugin|INFO] options:
 
-  [./symfony chCms:generate-validator myAction --plugin=myPlugin --base-class=myOtherModelValidator|INFO]
+  [./symfony chCms:generate-validator myAction --plugin=myPlugin --base-class=myOtherModelParamValidator|INFO]
 
-will generate plugins/myPlugin/lib/validator/plugin/PluginMyActionValidator.class.php and
-plugins/myPlugin/lib/validator/myActionValidator.class.php files.
+will generate plugins/myPlugin/lib/validator/plugin/PluginMyActionParamValidator.class.php and
+plugins/myPlugin/lib/validator/myActionParamValidator.class.php files.
 
-myActionValidator extends from PluginMyActionValidator, and PluginMyActionValidator extends from myOtherModelValidator.
+myActionParamValidator extends from PluginMyActionParamValidator, and PluginMyActionParamValidator extends from myOtherModelParamValidator.
 EOF;
   }
 
   protected function execute($arguments = array(), $options = array())
   {
-    $options['path'] = $this->getGenerationPath($arguments, $options);
-    $this->logSection('generate', sprintf('base path is %s', $options['path']));
-
     // prepare generation
     if (isset($options['plugin']) && $options['plugin'])
     {
-      $options['base-class'] = $this->generatePluginValidator($arguments, $options);
+      $options['base-class'] = $this->generatePluginParamValidator($arguments, $options);
     }
 
-    $this->generateValidator($arguments, $options);
+    $this->generateParamValidator($arguments, $options);
+
+    $this->generateTestSuite($arguments, $options);
   }
 
-  protected function generatePluginValidator($arguments, $options)
+  protected function generatePluginParamValidator($arguments, $options)
   {
-    $className = $this->getValidatorClassname(sprintf('Plugin%s', ucfirst($arguments['name'])));
-    $path = sprintf('%s/plugin', $options['path']);
+    $className = $this->getParamValidatorClassname(sprintf('Plugin%s', ucfirst($arguments['name'])));
+    $path = sprintf('%s/plugin', $this->getGenerationLibPath($arguments, $options));
 
-    $skeleton = $this->getSkeletonPath('validatorClass.class.php');
+    $skeleton = $this->getSkeletonPath('paramValidatorClass.class.php');
 
     $this->getFilesystem()->mkdirs($path);
     $dest = sprintf('%s/%s.class.php', $path, $className);
     $this->getFilesystem()->copy($skeleton, $dest);
     $this->getFilesystem()->replaceTokens($dest, '##', '##', array(
-        'validatorClass' => $className,
-        'BaseValidator'  => $options['base-class'],
+        'paramValidatorClass' => $className,
+        'BaseParamValidator'  => $options['base-class'],
         'package'        => (isset($options['plugin']) && $options['plugin']) ? $options['plugin'] : 'lib',
       ));
 
@@ -77,36 +76,53 @@ EOF;
     return $className;
   }
 
-  protected function generateValidator($arguments, $options)
+  protected function generateParamValidator($arguments, $options)
   {
-    $className = $this->getValidatorClassname($arguments['name']);
-    $path = $options['path'];
+    $className = $this->getParamValidatorClassname($arguments['name']);
+    $path = $this->getGenerationLibPath($arguments, $options);
+
     if (isset($options['plugin']) && $options['plugin'])
     {
-      $skeleton = $this->getSkeletonPath('validator.class.php');
+      $skeleton = $this->getSkeletonPath('paramValidator.class.php');
     }
     else
     {
-      $skeleton = $this->getSkeletonPath('validatorClass.class.php');
+      $skeleton = $this->getSkeletonPath('paramValidatorClass.class.php');
     }
 
     $this->getFilesystem()->mkdirs($path);
     $dest = sprintf('%s/%s.class.php', $path, $className);
     $this->getFilesystem()->copy($skeleton, $dest);
     $this->getFilesystem()->replaceTokens($dest, '##', '##', array(
-        'validatorClass' => $className,
-        'BaseValidator'  => $options['base-class'],
+        'paramValidatorClass' => $className,
+        'BaseParamValidator'  => $options['base-class'],
         'package'        => (isset($options['plugin']) && $options['plugin']) ? $options['plugin'] : 'lib'
       ));
 
     $this->logSection('generate', sprintf('generate class %s extending %s', $className, $options['base-class']));
   }
 
+  protected function generateTestSuite($arguments, $options)
+  {
+    $className = $this->getParamValidatorClassname($arguments['name']);
+    $path = $this->getGenerationTestPath($arguments, $options);
+
+    $skeleton = $this->getSkeletonPath('test/unit/param/paramValidatorTest.php');
+    $this->getFilesystem()->mkdirs($path);
+    $dest = sprintf('%s/%sTest.php', $path, $className);
+    $this->getFilesystem()->copy($skeleton, $dest);
+    $this->getFilesystem()->replaceTokens($dest, '##', '##', array(
+        'paramValidatorClass' => $className,
+      ));
+
+    $this->logSection('generate', sprintf('generate test file %s for %s', $dest, $className));
+  }
+
   protected function getValidatorClassname($name)
   {
-    if (!preg_match('#Validator$#', $name))
+    if (!preg_match('#ParamValidator$#', $name))
     {
-      return sprintf('%sValidator', $name);
+      return sprintf('%sParamValidator', $name);
     }
     return $name;
   }
@@ -122,13 +138,23 @@ EOF;
       {
         throw new InvalidArgumentException(sprintf('Unable to find plugin "%s"', $options['plugin']));
       }
-    }
-    else
-    {
-      $path = sfConfig::get('sf_lib_dir');
+
+      return $path;
     }
 
-    $path = sprintf('%s/lib/validator', $path);
+    return sfConfig::get('sf_root_dir');
+  }
+
+  protected function getGenerationLibPath($arguments, $options)
+  {
+    $path = sprintf('%s/lib/param', $this->getGenerationPath($arguments, $options));
+
+    return $path;
+  }
+
+  protected function getGenerationTestPath($arguments, $options)
+  {
+    $path = sprintf('%s/test/unit/param', $this->getGenerationPath($arguments, $options));
 
     return $path;
   }
@@ -136,13 +162,13 @@ EOF;
   protected function getSkeletonPath($skeleton)
   {
     // first check in /data/generator/skeleton/validator
-    $dir = sfConfig::get('sf_data_dir') . '/skeleton/validator';
+    $dir = sfConfig::get('sf_data_dir') . '/skeleton/param';
     if (file_exists($path = sprintf('%s/%s', $dir, $skeleton)))
     {
       return $path;
     }
 
-    return realpath(sprintf('%s/../../data/skeleton/validator/%s', dirname(__FILE__), $skeleton));
+    return realpath(sprintf('%s/../../data/skeleton/param/%s', dirname(__FILE__), $skeleton));
   }
-} // END OF chCmsApiGenerateValidatorTask
+} // END OF chCmsApiGenerateParamValidatorTask
 

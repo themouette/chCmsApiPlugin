@@ -2,30 +2,31 @@
 
 include dirname(__FILE__) . '/../../bootstrap/unit.php';
 
-$t = new lime_test(6, new lime_output_color());
+$t = new lime_test(9, new lime_output_color());
 
-class TestchCmsApiGenerateValidatorTask extends chCmsApiGenerateValidatorTask
+class TestchCmsApiGenerateValidatorTask extends chCmsApiGenerateParamValidatorTask
 {
   public function __construct(){}
 
   public function getValidatorClassname($name) {return parent::getValidatorClassname($name);}
-  public function getGenerationPath($arguments, $options) {return parent::getGenerationPath($arguments, $options);}
+  public function getGenerationLibPath($arguments, $options) {return parent::getGenerationLibPath($arguments, $options);}
+  public function getGenerationTestPath($arguments, $options) {return parent::getGenerationTestPath($arguments, $options);}
 }
 
 $t->diag('test utility methods');
 
 $t->diag('method getValidatorClassname');
 $task = new TestchCmsApiGenerateValidatorTask();
-$t->is($task->getValidatorClassname('class'), 'classValidator', 'append "Validator" to class name');
-$t->is($task->getValidatorClassname('classValidator'), 'classValidator', 'do not append "Validator" if already there');
-$t->is($task->getValidatorClassname('Validatorclass'), 'ValidatorclassValidator', 'append "Validator" if not at the end');
+$t->is($task->getValidatorClassname('class'), 'classParamValidator', 'append "ParamValidator" to class name');
+$t->is($task->getValidatorClassname('classParamValidator'), 'classParamValidator', 'do not append "ParamValidator" if already there');
+$t->is($task->getValidatorClassname('ParamValidatorclass'), 'ParamValidatorclassParamValidator', 'append "ParamValidator" if not at the end');
 
-$t->diag('method getGenerationPath');
-$t->is($task->getGenerationPath(array(), array()), sfConfig::get('sf_lib_dir'). '/lib/validator', '"lib/validator" is default destination');
-$t->is($task->getGenerationPath(array(), array('plugin' => 'sfTestPlugin')), sfConfig::get('sf_plugins_dir'). '/sfTestPlugin/lib/validator', '"lib/validator" is default destination for plugins');
+$t->diag('method getGenerationLibPath');
+$t->is($task->getGenerationLibPath(array(), array()), sfConfig::get('sf_lib_dir'). '/param', '"lib/param" is default destination');
+$t->is($task->getGenerationLibPath(array(), array('plugin' => 'sfTestPlugin')), sfConfig::get('sf_plugins_dir'). '/sfTestPlugin/lib/param', '"lib/param" is default destination for plugins');
 try
 {
-  $task->getGenerationPath(array(), array('plugin' => 'sfUnknownPlugin'));
+  $task->getGenerationLibPath(array(), array('plugin' => 'sfUnknownPlugin'));
   $t->fail('unknown plugin should throw an InvalidArgumentException');
 }
 catch(InvalidArgumentException $e)
@@ -33,3 +34,15 @@ catch(InvalidArgumentException $e)
   $t->pass('unknown plugin throws InvalidArgumentException');
 }
 
+$t->diag('method getGenerationTestPath');
+$t->is($task->getGenerationTestPath(array(), array()), sfConfig::get('sf_test_dir'). '/unit/param', '"test/unit/param" is default destination');
+$t->is($task->getGenerationTestPath(array(), array('plugin' => 'sfTestPlugin')), sfConfig::get('sf_plugins_dir'). '/sfTestPlugin/test/unit/param', '"test/unit/param" is default destination for plugins');
+try
+{
+  $task->getGenerationTestPath(array(), array('plugin' => 'sfUnknownPlugin'));
+  $t->fail('unknown plugin should throw an InvalidArgumentException');
+}
+catch(InvalidArgumentException $e)
+{
+  $t->pass('unknown plugin throws InvalidArgumentException');
+}

@@ -33,7 +33,7 @@ class chCmsApiFormatterPropertyFormatter extends chCmsApiPropertyFormatter
   {
     $formatter = $this->getFormatter();
 
-    return $formatter->format(parent::format($object, $fields));
+    return $formatter->format($this->extractProperty($object, $fields));
   }
 
   /**

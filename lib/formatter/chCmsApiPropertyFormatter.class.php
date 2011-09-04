@@ -25,16 +25,26 @@ class chCmsApiPropertyFormatter extends BasechCmsApiFormatter
   }
 
   /**
+   * extract property from object
+   *
+   * @return mixed
+   */
+  protected function extractProperty($object)
+  {
+    $fieldName  = $this->getOption('field_name');
+    $methodName = sprintf('get%s', ucfirst(sfInflector::camelize($fieldName)));
+
+    return $object->$methodName();
+  }
+
+  /**
    * extract field with $fieldName
    *
    * @return mixed
    */
   public function format($object)
   {
-    $fieldName  = $this->getOption('field_name');
-    $methodName = sprintf('get%s', ucfirst(sfInflector::camelize($fieldName)));
-
-    return $object->$methodName();
+    return $this->extractProperty($object);
   }
 
   /**

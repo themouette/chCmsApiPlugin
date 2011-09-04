@@ -17,12 +17,12 @@ $t->is($v->clean(30), '30', 'default value is overriden by valid value');
 $t->diag('test not valid value');
 try
 {
-  $v->clean()
+  $v->clean("%bad param%");
   $t->fail('invalid data should throw an exception');
 }
 catch(sfValidatorError $e)
 {
   $t->pass('invalid parameter throw an exception');
   $t->is($e->getMessage(), '%message%', 'exception embed expected message');
-  $t->is($e->getCode(), '%code%', 'exception embed expected code "%code%"')
+  $t->is($e->getCode(), '%code%', 'exception embed expected code "%code%"');
 }

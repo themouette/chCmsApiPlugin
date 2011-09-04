@@ -123,4 +123,36 @@ class PluginchCmsApiParamValidator extends BaseForm
 
     return false;
   }
+
+  /**
+   * the user
+   */
+  protected static $user;
+
+  /**
+   * setter for User
+   */
+  public static function setUser($User)
+  {
+    chCmsApiParamValidator::$user = $User;
+  }
+
+  /**
+   * getter for user
+   * @return sfUser
+   */
+  public function getUser()
+  {
+    return chCmsApiParamValidator::$user;
+  }
+
+  /**
+   * set the current user into the param validator
+   *
+   * @return void
+   */
+  public static function listenToLoadFactoryEvent($sf_event)
+  {
+    return chCmsApiParamValidator::setUser($sf_event->getSubject()->getUser());
+  }
 } // END OF PluginchCmsApiParamValidator

@@ -25,6 +25,10 @@ class chCmsApiPluginConfiguration extends sfPluginConfiguration
         'response.method_not_found',
         array('chCmsApiPluginResponse', 'methodNotFound'));
 
+    $this->dispatcher->connect(
+        'context.load_factories',
+        array('chCmsApiParamValidator', 'listenToLoadFactoryEvent'));
+
     /*
     keep just in case
     $this->dispatcher->connect(

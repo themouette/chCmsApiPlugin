@@ -45,9 +45,6 @@ EOF;
 
   protected function execute($arguments = array(), $options = array())
   {
-    $options['path'] = $this->getGenerationLibPath($arguments, $options);
-    $this->logSection('generate', sprintf('base path is %s', $options['path']));
-
     // prepare generation
     if (isset($options['plugin']) && $options['plugin'])
     {
@@ -55,12 +52,14 @@ EOF;
     }
 
     $this->generateValidator($arguments, $options);
+
+    $this->generateTestSuite($arguments, $options);
   }
 
   protected function generatePluginValidator($arguments, $options)
   {
     $className = $this->getValidatorClassname(sprintf('Plugin%s', ucfirst($arguments['name'])));
-    $path = sprintf('%s/plugin', $options['path']);
+    $path = sprintf('%s/plugin', $this->getGenerationLibPath($arguments, $options));
 
     $skeleton = $this->getSkeletonPath('validatorClass.class.php');
 
@@ -80,7 +79,7 @@ EOF;
   protected function generateValidator($arguments, $options)
   {
     $className = $this->getValidatorClassname($arguments['name']);
-    $path = $options['path'];
+    $path = $this->getGenerationLibPath($arguments, $options);
     if (isset($options['plugin']) && $options['plugin'])
     {
       $skeleton = $this->getSkeletonPath('validator.class.php');
@@ -104,7 +103,7 @@ EOF;
 
   protected function generateTestSuite($arguments, $options)
   {
-    $className = $this->getParamValidatorClassname($arguments['name']);
+    $className = $this->getValidatorClassname($arguments['name']);
     $path = $this->getGenerationTestPath($arguments, $options);
 
     $skeleton = $this->getSkeletonPath('test/unit/validator/validatorTest.php');

@@ -15,18 +15,32 @@
 class ##validatorClass## extends ##BaseValidator##
 {
   /**
-   * use this validator in your chCmsApiAction as follow :
-   * <code>
-   *  $this->validateRequest(new ##validatorClass##(array()));
-   * </code>
-   * then you can access your params through request as usual
+   * configure the widget.
+   * add following options :
+   *  - default (20) the default value if no given data
+   *
+   * @param array $options  the validator options
+   * @param array $messages error messages
    */
-  public function configure()
+  protected function configure($options = array(), $messages = array())
   {
-    /*
-    $this->setValidator('page',   new chCmsPageParamValidator(array('max' => $this->getOption('max_page', null))));
-    $this->setValidator('max',    new chCmsParamListLengthValidator(array('default' => $this->getOption('list_length', 10))));
-    $this->setValidator('term',   new sfValidatorString(array('min_length' => 0, 'required' => false, 'empty_value' => "%")));
-    */
+    parent::configure($options, $messages);
+    $this->setOption('required', false);
+    $this->addOption('default', 20);
+  }
+
+  protected function getEmptyValue()
+  {
+    return $this->getOption('default');
+  }
+
+  /**
+   * do clean
+   */
+  protected function doClean($value)
+  {
+    $value = parent::doClean($value);
+
+    return $value;
   }
 } // END OF ##validatorClass##

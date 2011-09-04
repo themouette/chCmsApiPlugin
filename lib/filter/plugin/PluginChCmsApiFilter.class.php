@@ -33,9 +33,9 @@ class PluginChCmsApiFilter extends sfFilter
 
         $filterChain->execute();
       }
-      catch (chCmsError406Exception $e)
+      catch (chCmsApiErrorException $e)
       {
-        $response->setStatusCode('406');
+        $response->setStatusCode($e->getCode());
         $response->setApiResultContent($this->getErrorArray($e), $request);
       }
       catch (chCmsError401Exception $e)

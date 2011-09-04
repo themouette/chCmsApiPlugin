@@ -76,7 +76,7 @@ abstract class chCmsApiActions extends chCmsActions
       return ;
     }
 
-    return $this->forward406($errorMessage, $errorCode, $parameters);
+    return $this->forward406($errorCode, $errorMessage, $parameters);
   }
 
   /**

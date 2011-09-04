@@ -1,6 +1,6 @@
 <?php
 /**
- * This file declare the chCmsError406Exception class.
+ * This file declare the chCmsError400Exception class.
  *
  * @package chCmsApiPlugin
  * @subpackage exception
@@ -10,9 +10,9 @@
  */
 
 /**
- * 406 error exception
+ * 400 error exception
  */
-class chCmsError406Exception extends chCmsApiErrorException
+class chCmsError400Exception extends chCmsApiErrorException
 {
   /**
    * exception constructor
@@ -23,6 +23,6 @@ class chCmsError406Exception extends chCmsApiErrorException
    **/
   public function __construct($code = null, $message = null, $parameters = null)
   {
-    parent::__construct($code, $message, 406, $parameters);
+    parent::__construct($code, $message, 400, $parameters);
   }
-} // END OF chCmsError406Exception
+} // END OF chCmsError400Exception

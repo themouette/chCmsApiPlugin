@@ -65,19 +65,10 @@ class PluginchCmsApiParamValidator extends BaseForm
       return null;
     }
 
+    // do not iterate over global errors array.
+    // all errors are global as no field are defined.
+
     $errors = array();
-
-    if ($this->hasGlobalErrors())
-    {
-      $errors['global'] = array();
-
-      // global errors
-      foreach ($this->getGlobalErrors() as $validator_error)
-      {
-        $errors['global'][] = $validator_error->getMessage();
-      }
-    }
-
     // iterate over fields
     foreach ($this->getErrorSchema() as $field_name => $error_obj)
     {

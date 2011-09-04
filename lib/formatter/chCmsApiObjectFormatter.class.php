@@ -235,12 +235,12 @@ class chCmsApiObjectFormatter extends BasechCmsApiFormatter implements ArrayAcce
    * @param array|null   $fields   fields to use
    * @return array
    */
-  public function formatPager($pager, $fields = array())
+  public function formatPager($pager, $fields = array(), $options = array())
   {
     $objectFormatter = clone($this);
     $objectFormatter->mergeFormatFields($fields);
     $formatter = new chCmsApiPagerFormatter($objectFormatter, $options);
-    return $formatter->format($collection);
+    return $formatter->format($pager);
   }
 
 	/**

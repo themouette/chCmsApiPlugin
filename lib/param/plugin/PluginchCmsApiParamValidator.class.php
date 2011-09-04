@@ -116,6 +116,25 @@ class PluginchCmsApiParamValidator extends BaseForm
   }
 
   /**
+   * overrid the bind function
+   *
+   * @param array $values A merged array of values and files
+   * @return void
+   */
+  protected function doBind(array $values)
+  {
+    try
+    {
+      parent::doBind($values);
+    }
+    catch(chCmsApiErrorException $e)
+    {
+      $e->setParameters($values);
+      throw $e;
+    }
+  }
+
+  /**
    * the user
    */
   protected static $user;

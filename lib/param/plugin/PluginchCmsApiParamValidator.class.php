@@ -14,6 +14,11 @@
  */
 class PluginchCmsApiParamValidator extends BaseForm
 {
+  public function __construct($options = array())
+  {
+    parent::__construct(array(), $options);
+  }
+
   /**
    * set up the form
    *

@@ -59,49 +59,6 @@ class chCmsApiTools
   }
 
   /**
-   * format given array result for current request format.
-   *
-   * @param array     $results  current results to render.
-   * @param sfRequest $request  the current request.
-   * @param sfResponse $response  the current response.
-   * @return sfView::NONE
-   */
-  public static function formatResultForRequest($results, $request, $response)
-  {
-    chCmsApiTools::setResponseContentType($request, $response);
-    switch ($request->getRequestFormat())
-    {
-      case 'json':
-      case 'jsonp':
-        $callback = $request->getParameter('jsonp', null);
-        $result = json_encode($results);
-
-        if (!is_null($callback))
-        {
-          $result = sprintf('%s(%s);', $callback, json_encode($results));
-        }
-        break;
-      case 'xml':
-        $result = self::array_to_xml(
-                    $results,
-                    new SimpleXMLElement(sprintf(
-                            "<%sxml version=\"1.0\" encoding=\"%s\"%s><root/>",
-                            '?', // to prevent issue with short open tag
-                            $response->getCharset(),
-                            '?' // to prevent issue with short open tag
-                          )
-                      ))->asXML();
-        break;
-
-      default:
-        throw new sfException(sprintf('Unknown format "%s"', $request->getRequestFormat()));
-        break;
-    }
-
-    return $result;
-  }
-
-  /**
    * converts an array to xml nodes
    *
    * @param array $arr the array to convert

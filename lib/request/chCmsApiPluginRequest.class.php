@@ -14,6 +14,8 @@
  */
 class chCmsApiPluginRequest
 {
+  const PARAM_NAMESPACE = 'plugins.chCmsApiPlugin';
+
   /**
    * listen to request.method_not_found event and call plugin function
    * if exists.
@@ -31,5 +33,52 @@ class chCmsApiPluginRequest
       ));
       return true;
     }
+  }
+
+  /**
+   * return the route param validator if any
+   *
+   * @param sfRequest $sf_request the request object
+   * @return chCmsApiParamValidator
+   */
+  public static function getParamValidator($sf_request)
+  {
+    return $sf_request->getAttribute('param_validator', null, chCmsApiPluginRequest::PARAM_NAMESPACE);
+  }
+
+  /**
+   * set the route param validator into request
+   *
+   * @param sfRequest $sf_request the request object
+   * @return sfRequest
+   */
+  public static function setParamValidator($sf_request, $validator)
+  {
+    $sf_request->setAttribute('param_validator', $validator, chCmsApiPluginRequest::PARAM_NAMESPACE);
+    return $sf_request;
+  }
+
+  /**
+   * return the original parameters before validation.
+   *
+   * @param sfRequest $sf_request the request object
+   * @return array
+   */
+  public static function getOriginalApiParameters($sf_request)
+  {
+    return $sf_request->getAttribute('api_original_parameters', $request->getParameterHolder()->getAll(), chCmsApiPluginRequest::PARAM_NAMESPACE);
+  }
+
+  /**
+   * set the original parameters before validation.
+   *
+   * @param sfRequest $sf_request the request object
+   * @param array     $parameters parameters to set
+   * @return sfRequest
+   */
+  public static function setOriginalApiParameters($sf_request, $parameters)
+  {
+    $sf_request->setAttribute('api_original_parameters', $parameters, chCmsApiPluginRequest::PARAM_NAMESPACE);
+    return $sf_request;
   }
 } // END OF chCmsApiRequest

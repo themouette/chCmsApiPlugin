@@ -129,8 +129,8 @@ Now, when @my_first_api_route will be requested, thanks to the *chCmsApiFilter*,
 parameters will go through *myApiParamValidator* and directly set into the
 request object.
 
-Note :  to access original parameters, you can use *api_original_parameters*
-        $sf_request attribute.
+Note :  to access original parameters, you can use *getOriginalApiParameters*
+        $sf_request method.
 
 ### Formatting output
 

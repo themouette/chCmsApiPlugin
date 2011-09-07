@@ -8,18 +8,18 @@ class TestchCmsApiGenerateValidatorTask extends chCmsApiGenerateParamValidatorTa
 {
   public function __construct(){}
 
-  public function getValidatorClassname($name) {return parent::getValidatorClassname($name);}
+  public function getParamValidatorClassname($name) {return parent::getParamValidatorClassname($name);}
   public function getGenerationLibPath($arguments, $options) {return parent::getGenerationLibPath($arguments, $options);}
   public function getGenerationTestPath($arguments, $options) {return parent::getGenerationTestPath($arguments, $options);}
 }
 
 $t->diag('test utility methods');
 
-$t->diag('method getValidatorClassname');
+$t->diag('method getParamValidatorClassname');
 $task = new TestchCmsApiGenerateValidatorTask();
-$t->is($task->getValidatorClassname('class'), 'classParamValidator', 'append "ParamValidator" to class name');
-$t->is($task->getValidatorClassname('classParamValidator'), 'classParamValidator', 'do not append "ParamValidator" if already there');
-$t->is($task->getValidatorClassname('ParamValidatorclass'), 'ParamValidatorclassParamValidator', 'append "ParamValidator" if not at the end');
+$t->is($task->getParamValidatorClassname('class'), 'classParamValidator', 'append "ParamValidator" to class name');
+$t->is($task->getParamValidatorClassname('classParamValidator'), 'classParamValidator', 'do not append "ParamValidator" if already there');
+$t->is($task->getParamValidatorClassname('ParamValidatorclass'), 'ParamValidatorclassParamValidator', 'append "ParamValidator" if not at the end');
 
 $t->diag('method getGenerationLibPath');
 $t->is($task->getGenerationLibPath(array(), array()), sfConfig::get('sf_lib_dir'). '/param', '"lib/param" is default destination');

@@ -168,17 +168,27 @@ class PluginchCmsApiParamValidator extends BaseForm
 
     if ( ! $this->isValid() )
     {
-      // request is invalid, throw new error
-      throw new chCmsApiErrorException(
-            $this->getErrorCode(),
-            $this->getErrorMessage(),
-            $options['error_status_code'],
-            $this->getErrorParameters());
+      $this->throwApiError();
     }
 
     // replace request parameters.
     // to access raw parameters, use getOriginalApiParameters
     $request->getParameterHolder()->add($this->getValues());
+  }
+
+  /**
+   * throw an API error
+   *
+   * @return void
+   */
+  protected function throwApiError()
+  {
+    // request is invalid, throw new error
+    throw new chCmsApiErrorException(
+          $this->getErrorCode(),
+          $this->getErrorMessage(),
+          $options['error_status_code'],
+          $this->getErrorParameters());
   }
 
   /**

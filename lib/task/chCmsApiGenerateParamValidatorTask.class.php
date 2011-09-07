@@ -118,7 +118,7 @@ EOF;
     $this->logSection('generate', sprintf('generate test file %s for %s', $dest, $className));
   }
 
-  protected function getValidatorClassname($name)
+  protected function getParamValidatorClassname($name)
   {
     if (!preg_match('#ParamValidator$#', $name))
     {

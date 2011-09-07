@@ -66,7 +66,7 @@ class chCmsApiPluginRequest
    */
   public static function getOriginalApiParameters($sf_request)
   {
-    return $sf_request->getAttribute('api_original_parameters', $request->getParameterHolder()->getAll(), chCmsApiPluginRequest::PARAM_NAMESPACE);
+    return $sf_request->getAttribute('api_original_parameters', $sf_request->getParameterHolder()->getAll(), chCmsApiPluginRequest::PARAM_NAMESPACE);
   }
 
   /**

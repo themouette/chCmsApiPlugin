@@ -75,23 +75,45 @@ class PluginChCmsApiFilter extends sfFilter
     $response = $this->getContext()->getResponse();
     $request  = $this->getContext()->getRequest();
     $route    = $request->getAttribute('sf_route');
+
+    // check there is a validator
+    if ($paramValidator = $this->getParamValidatorForRoute($route))
+    {
+      $request->setParamValidator($paramValidator);
+      $paramValidator->processApiRequest($request);
+    }
+  }
+
+  /**
+   * create the param_validator object
+   *
+   * @return chCmsApiParamValidator
+   */
+  protected function getParamValidatorForRoute($route)
+  {
     $options  = $route->getOptions();
 
     // set default options
     $options = array_merge(array(
-          'param_validator' => false), $options);
+          'param_validator'       => false,
+          'param_validator_args'  => array()), $options);
 
-    // check there is avalidator
-    if (  ! ($options['param_validator']) ||
-          ! (is_callable(array($options['param_validator'], 'processApiRequest'))))
+    switch (true)
     {
-      // no validator to call
-      // return
-      return ;
+      case is_object($options['param_validator']) && is_callable(array($options['param_validator'], 'processApiRequest')):
+        // object is already instanciate
+        return $options['param_validator'];
+
+      case (bool) $options['param_validator']:
+        // class name and arguments
+        $r = new ReflectionClass($options['param_validator']);
+        return $r->newInstanceArgs($options['param_validator_args']);
+
+      default:
+        // no validator to call
+        // return
+        return false;
     }
-
-    $paramValidator->processApiRequest($request);
-
   }
 
   /**
@@ -101,7 +123,7 @@ class PluginChCmsApiFilter extends sfFilter
    * @return  array
    * @author Julien Muetton <julien_muetton@carpe-hora.com>
    **/
-  protected function getErrorArray(chCmsError406Exception $e)
+  protected function getErrorArray(chCmsApiErrorException $e)
   {
     $result = array(
       'code'    => $e->getApiCode(),

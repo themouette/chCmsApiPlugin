@@ -25,9 +25,6 @@ class PluginChCmsParamCoordinatesValidator extends chCmsValidatorApiBase
    *
    * @param array $options    An array of options
    * @param array $messages   An array of error messages
-   *
-   * @param array $options  the validator options
-   * @param array $messages error messages
    */
   protected function configure($options = array(), $messages = array())
   {

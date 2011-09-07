@@ -45,7 +45,7 @@ Create an API function
 
 ### register routing
 
-Create a new route as usual (use improved TaskExtraPlugin tu generate plugin)
+Create a new route as usual (use improved [TaskExtraPlugin](https://github.com/Carpe-Hora/sfTaskExtraPlugin) to generate plugin)
 
   [php]
   // plugins/myApiPlugin/lib/routing/myApiPluginRouting.class.php
@@ -82,7 +82,7 @@ parameters. Let's go further.
 
 Every API request is about recieving data and return result depending on those
 paramters.
-To make ensure parameter consistancy, chCmsApiPlugin provide ParamValidators.
+To ensure parameter consistancy, chCmsApiPlugin provide ParamValidators.
 
 Note:   forms can be used either. let's say that ParamValidators are just as
         forms but with extra functionalities.
@@ -129,12 +129,12 @@ Now, when @my_first_api_route will be requested, thanks to the *chCmsApiFilter*,
 parameters will go through *myApiParamValidator* and directly set into the
 request object.
 
-Note :  to access original paramters, you can user *api_original_parameters*
+Note :  to access original parameters, you can use *api_original_parameters*
         $sf_request attribute.
 
 ### Formatting output
 
-the real pain when creating an API is the response formatting. Most of the time
+The real pain when creating an API is the response formatting. Most of the time
 You don't care about the result format, you only deal with collections, active
 record objects, arrays and scalar values.
 
@@ -159,7 +159,7 @@ generate a formatter to use it.
 
 > ./symfony chCms:generate-formatter --plugin=myApiPlugin myApi
 
-Will generate *myApiFormatter* extending *chCmsApiObjectFromatter* and a test
+Will generate *myApiFormatter* extending *chCmsApiObjectFormatter* and a test
 file.
 
 To specialize the formatter, specialize the initialize method:

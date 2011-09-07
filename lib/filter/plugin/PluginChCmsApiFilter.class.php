@@ -83,7 +83,7 @@ class PluginChCmsApiFilter extends sfFilter
 
     // check there is avalidator
     if (  ! ($options['param_validator']) ||
-          ! (is_callable(array($options['param_validator'], 'bind')))))
+          ! (is_callable(array($options['param_validator'], 'processApiRequest'))))
     {
       // no validator to call
       // return

@@ -161,7 +161,8 @@ class PluginchCmsApiParamValidator extends BaseForm
   {
     $options = array_merge($this->getOptions(), $options);
     // bind with all the request paramters
-    $this->bind($request->getParameterHolder()->getAll());
+    $request_params = $request->getParameterHolder()->getAll();
+    $this->bind($request_params);
 
     if ( ! $this->isValid() )
     {
@@ -175,7 +176,7 @@ class PluginchCmsApiParamValidator extends BaseForm
 
     // replace request parameters.
     // to access raw parameters, use api_original_parameters request attribute
-    $request->setAttribute('api_original_parameters')
+    $request->setAttribute('api_original_parameters', $request_params);
     $request->getParameterHolder()->add($this->getValues());
   }
 

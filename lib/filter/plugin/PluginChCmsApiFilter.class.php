@@ -29,6 +29,8 @@ class PluginChCmsApiFilter extends sfFilter
         $response = $this->getContext()->getResponse();
         $request  = $this->getContext()->getRequest();
 
+        $this->validateRequestParamters();
+
         $response->setContentTypeForFormat($request->getRequestFormat());
 
         $filterChain->execute();
@@ -59,6 +61,37 @@ class PluginChCmsApiFilter extends sfFilter
     {
       $filterChain->execute();
     }
+  }
+
+  /**
+   * execute the request parameter validation
+   * and update request parameters
+   *
+   * @return void
+   * @throw chCmsApiErrorException if paramters are invalid
+   */
+  protected function validateRequestParamters()
+  {
+    $response = $this->getContext()->getResponse();
+    $request  = $this->getContext()->getRequest();
+    $route    = $request->getAttribute('sf_route');
+    $options  = $route->getOptions();
+
+    // set default options
+    $options = array_merge(array(
+          'param_validator' => false), $options);
+
+    // check there is avalidator
+    if (  ! ($options['param_validator']) ||
+          ! (is_callable(array($options['param_validator'], 'bind')))))
+    {
+      // no validator to call
+      // return
+      return ;
+    }
+
+    $paramValidator->processApiRequest($request);
+
   }
 
   /**

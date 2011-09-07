@@ -14,8 +14,14 @@
  */
 class PluginchCmsApiParamValidator extends BaseForm
 {
+  /**
+   * the current sf_user
+   */
+  protected static $user;
+
   public function __construct($options = array())
   {
+    $options = array_merge(array('error_status_code' => 400));
     parent::__construct(array(), $options);
   }
 
@@ -140,9 +146,38 @@ class PluginchCmsApiParamValidator extends BaseForm
   }
 
   /**
-   * the user
+   * handle API request parameters processing
+   * bind all request parameters
+   * you can provide one of the following options :
+   *  - error_status_code : http status for error responses (400)
+   *
+   * @param sfRequest $request  the current sf_request
+   * @param array     $options  the options override
+   *
+   * @return void
+   * @throw chCmsApiErrorException
    */
-  protected static $user;
+  public function processApiRequest($request, $options = array())
+  {
+    $options = array_merge($this->getOptions(), $options);
+    // bind with all the request paramters
+    $this->bind($request->getParameterHolder()->getAll());
+
+    if ( ! $this->isValid() )
+    {
+      // request is invalid, throw new error
+      throw new chCmsApiErrorException(
+            $this->getErrorCode(),
+            $this->getErrorMessage(),
+            $options['error_status_code'],
+            $this->getErrorParameters());
+    }
+
+    // replace request parameters.
+    // to access raw parameters, use api_original_parameters request attribute
+    $request->setAttribute('api_original_parameters')
+    $request->getParameterHolder()->add($this->getValues());
+  }
 
   /**
    * setter for User

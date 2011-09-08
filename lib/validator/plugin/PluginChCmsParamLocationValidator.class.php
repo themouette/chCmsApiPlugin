@@ -34,6 +34,7 @@ class PluginChCmsParamLocationValidator extends chCmsValidatorApiBase
     $this->addoption('min_length', 3);
     $this->addoption('max_length', 255);
     $this->setMessage('invalid', 'Invalid data "%message%".');
+    $this->setMessage('required', 'You must provide a location.');
     $this->addMessage('server_error', 'geocoding server error "%message%".');
     $this->addMessage('max_length', '"%value%" is too long (%max_length% characters max).');
     $this->addMessage('min_length', '"%value%" is too short (%min_length% characters min).');

@@ -35,7 +35,7 @@ class PluginChCmsParamLocationOrCoordinatesValidator extends chCmsValidatorApiBa
     $this->addOption('location', 'location');
     $this->addOption('output', 'coord');
 
-    $this->addMessage('required', 'You must provide a "%location%" or a "%coordinates%" field.');
+    $this->setMessage('required', 'You must provide a "%location%" or a "%coordinates%" field.');
     $this->addMessage('too_many', 'You must provide only one of "%location%" or "%coordinates%" field.');
   }
 

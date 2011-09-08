@@ -31,6 +31,7 @@ class PluginChCmsParamCoordinatesValidator extends chCmsValidatorApiBase
     parent::configure($options, $messages);
     $this->addMessage('bad_format', 'please provide lat/long array');
     $this->addMessage('invalid', 'latitude or longitude is invalid. please provide a decimal coordinate array');
+    $this->setMessage('required', 'You must provide coordinates.');
   }
 
   /**

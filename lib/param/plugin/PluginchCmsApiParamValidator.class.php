@@ -21,7 +21,7 @@ class PluginchCmsApiParamValidator extends BaseForm
 
   public function __construct($options = array())
   {
-    $options = array_merge(array('error_status_code' => 400));
+    $options = array_merge(array('error_status_code' => 400), $options);
     parent::__construct(array(), $options);
   }
 
@@ -187,7 +187,7 @@ class PluginchCmsApiParamValidator extends BaseForm
     throw new chCmsApiErrorException(
           $this->getErrorCode(),
           $this->getErrorMessage(),
-          $options['error_status_code'],
+          $this->options['error_status_code'],
           $this->getErrorParameters());
   }
 

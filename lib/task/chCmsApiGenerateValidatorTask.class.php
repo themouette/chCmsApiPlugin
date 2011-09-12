@@ -21,7 +21,7 @@ class chCmsApiGenerateValidatorTask extends sfGeneratorBaseTask
     ));
 
     $this->addOptions(array(
-      new sfCommandOption('base-class', null, sfCommandOption::PARAMETER_REQUIRED, 'The base class to extend from', 'sfValidator'),
+      new sfCommandOption('base-class', null, sfCommandOption::PARAMETER_REQUIRED, 'The base class to extend from', 'chCmsValidatorApiBase'),
       new sfCommandOption('plugin', null, sfCommandOption::PARAMETER_REQUIRED, 'The plugin to generate class in', null),
     ));
 

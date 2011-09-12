@@ -17,7 +17,7 @@ try
 catch(sfValidatorError $e)
 {
   $t->pass('empty values throw an exception');
-  $t->is($e->getMessage(), 'Required.', 'exception embed expected message');
+  $t->is($e->getMessage(), 'You must provide a "%location%" or a "%coordinates%" field.', 'exception embed expected message');
   $t->is($e->getCode(), 'required', 'exception embed expected code "required"');
 }
 

@@ -19,12 +19,12 @@ $v->bind(array(
     'param' => 'bad value'));
 $t->ok(!$v->isValid(), 'giving bad parameters make ##paramValidatorClass## invalid');
 $t->is_deeply($v->getErrorParameters(), array(
-                  'param' => "error message"), 'errors are ok for invalid paramters "param"');
+                  'param' => "error message"), 'errors are ok for invalid parameters "param"');
 
 $t->diag('check with valid params');
 $v = new ##paramValidatorClass##();
 $v->bind(array(
     'param' => 'good value'));
-$t->ok($v->isValid(), 'giving bad parameters make ##paramValidatorClass## valid');
+$t->ok($v->isValid(), 'giving good parameters make ##paramValidatorClass## valid');
 $t->is_deeply($v->getValues(), array(
     'param' => 'good value'), 'default values are what expected');

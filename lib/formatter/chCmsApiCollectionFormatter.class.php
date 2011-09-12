@@ -53,6 +53,11 @@ class chCmsApiCollectionFormatter extends BasechCmsApiFormatter
     $ret = array();
     $formatter = $this->getFormatter();
 
+    if (!$collection)
+    {
+      return $ret;
+    }
+
     if ($this->getOption('keep_keys', false))
     {
       foreach ($collection as $key => $object)

@@ -29,9 +29,9 @@ class PluginChCmsApiFilter extends sfFilter
         $response = $this->getContext()->getResponse();
         $request  = $this->getContext()->getRequest();
 
-        $this->validateRequestParamters();
-
         $response->setContentTypeForFormat($request->getRequestFormat());
+
+        $this->validateRequestParamters();
 
         $filterChain->execute();
       }

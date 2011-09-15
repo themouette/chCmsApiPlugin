@@ -42,18 +42,23 @@ class PluginChCmsApiFilter extends sfFilter
       }
       catch (chCmsError401Exception $e)
       {
-        $response->setStatusCode('401');
         if ($this->getContext()->getUser()->isAuthenticated())
         {
+          $response->setStatusCode('403');
           $response->setApiResultContent(array('error' => array(
             'code'    => 'INSUFFICIENT_CREDENTIAL',
-            'message' => 'this ressource is protected') ), $request);
+            'message' => $e->getMessage()
+                            ? $e->getMessage()
+                            : 'this ressource is protected') ), $request);
         }
         else
         {
+          $response->setStatusCode('401');
           $response->setApiResultContent(array('error' => array(
             'code'    => 'AUTHENTICATION_REQUIRED',
-            'message' => 'this ressource is protected, please sign in') ), $request);
+            'message' => $e->getMessage()
+                            ? $e->getMessage()
+                            : 'this ressource is protected') ), $request);
         }
       }
     }

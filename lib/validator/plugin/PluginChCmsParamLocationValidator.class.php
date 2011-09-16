@@ -60,12 +60,12 @@ class PluginChCmsParamLocationValidator extends chCmsValidatorApiBase
 
         // extract first placemark
         return array(
-          'lat'   => $r->Placemark[0]->Point->coordinates[1],
-          'long'  => $r->Placemark[0]->Point->coordinates[0]);
+          'lat'   => $r->results[0]->geometry->location->lat,
+          'long'  => $r->results[0]->geometry->location->lng);
       }
-      catch (sfException $e)
+      catch (GeocoderException $e)
       {
-        if (strstr($e->getMessage(), '602') || strstr($e->getMessage(), '603'))
+        if ('ZERO_RESULTS' === $e->getGeocoderError())
         {
           throw new sfValidatorError($this, 'invalid', array('message' => $e->getMessage()));
         }

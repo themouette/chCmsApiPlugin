@@ -42,7 +42,7 @@ class chCmsApiTools
    */
   public static function getFormatRequirementForRoute($extra = array())
   {
-    return join('|', self::getAvailableFormats($extra));
+    return sprintf('(?:%s)',join('|', self::getAvailableFormats($extra)));
   }
 
   /**

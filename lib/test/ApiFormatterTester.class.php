@@ -15,6 +15,56 @@
 class ApiFormatterTester extends lime_test
 {
   /**
+   * execute every method starting with "test"
+   *
+   * @return void
+   */
+  public function run()
+  {
+    $methods = get_class_methods($this);
+    foreach ($methods as $method)
+    {
+      if (0 === strpos($method, 'test'))
+      {
+        $this->diag('runs '.$method);
+        call_user_func_array(array($this, $method), $this->getTestArgs($method));
+      }
+    }
+  }
+
+  /**
+   * return test arguments for $method
+   *
+   * @return array
+   */
+  protected function getTestArgs($method)
+  {
+    return array();
+  }
+
+  /**
+   * link to addPlannedTests
+   *
+   * @return ApiFormatterTester
+   */
+  protected function expect($number_expected)
+  {
+    return $this->addPlannedTests($number_expected);
+  }
+
+  /**
+   * add tests to planned tests
+   *
+   * @return ApiFormatterTester
+   */
+  protected function addPlannedTests($planned)
+  {
+    $this->results['stats']['plan']+= $planned;
+
+    return $this;
+  }
+
+  /**
    * compare 2 collections
    *
    * @param stdClass  $test_collection      the collection to test

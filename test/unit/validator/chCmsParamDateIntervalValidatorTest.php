@@ -5,14 +5,16 @@
 
 include dirname(__FILE__) . '/../../bootstrap/unit.php';
 
-$t = new lime_test(5, new lime_output_color());
+$t = new lime_test(13, new lime_output_color());
 
 $t->diag('test empty value');
-$v = new chCmsParamDateIntervalValidator();
-$t->is($v->clean(null), '20', 'default value is used');
+$v = new chCmsParamDateIntervalValidator(array(
+  'required' => false
+));
+$t->is($v->clean(null), null, 'default value is used');
 
 $t->diag('test valid value');
-$t->is($v->clean(30), '30', 'default value is overriden by valid value');
+$t->is($v->clean('1 hour'), '1 hour', 'default value is overriden by valid value');
 
 $t->diag('test not valid value');
 try
@@ -23,6 +25,49 @@ try
 catch(sfValidatorError $e)
 {
   $t->pass('invalid parameter throw an exception');
-  $t->is($e->getMessage(), '%message%', 'exception embed expected message');
-  $t->is($e->getCode(), '%code%', 'exception embed expected code "%code%"');
+  $t->is($e->getMessage(), 'Invalid interval "%bad param%".', 'exception embed expected message');
+  $t->is($e->getCode(), 'invalid', 'exception embed expected code "%code%"');
 }
+
+$v = new chCmsParamDateIntervalValidator(array(
+  'min_interval' => '2 hour'
+));
+
+$t->diag('test not valid value (interval too small)');
+try
+{
+  $v->clean('1 hour');
+  $t->fail('invalid data should throw an exception');
+}
+catch(sfValidatorError $e)
+{
+  $t->pass('invalid parameter throw an exception');
+  $t->is($e->getMessage(), 'Invalid interval "1 hour".', 'exception embed expected message');
+  $t->is($e->getCode(), 'invalid', 'exception embed expected code "%code%"');
+}
+
+$t->diag('test valid value');
+$t->is($v->clean('+2 hour'), '+2 hour', 'a large enough interval is valid');
+
+
+$v = new chCmsParamDateIntervalValidator(array(
+  'min_interval'  => '2 hour',
+  'current_date'  => strtotime('now +1 hour')
+));
+
+$t->diag('test not valid value (interval too small)');
+try
+{
+  $v->clean('1 hour');
+  $t->fail('invalid data should throw an exception');
+}
+catch(sfValidatorError $e)
+{
+  $t->pass('invalid parameter throw an exception');
+  $t->is($e->getMessage(), 'Invalid interval "1 hour".', 'exception embed expected message');
+  $t->is($e->getCode(), 'invalid', 'exception embed expected code "%code%"');
+}
+
+$t->diag('test valid value');
+$t->is($v->clean('+2 hour'), '+2 hour', 'a large enough interval is valid');
+

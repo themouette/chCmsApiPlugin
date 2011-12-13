@@ -5,7 +5,15 @@
 
 include dirname(__FILE__) . '/../../bootstrap/unit.php';
 
-$t = new lime_test(13, new lime_output_color());
+function makeInterval($start, $end)
+{
+  return sprintf('%s|%s',
+    date(DateTime::ISO8601, strtotime($start)),
+    date(DateTime::ISO8601, strtotime($end))
+  );
+}
+
+$t = new lime_test(19, new lime_output_color());
 
 $t->diag('test empty value');
 $v = new chCmsParamDateIntervalValidator(array(
@@ -14,7 +22,14 @@ $v = new chCmsParamDateIntervalValidator(array(
 $t->is($v->clean(null), null, 'default value is used');
 
 $t->diag('test valid value');
-$t->is($v->clean('1 hour'), '1 hour', 'default value is overriden by valid value');
+$t->is(
+  $v->clean(makeInterval('now', '+1 hour')),
+  array(
+    new DateTime('now'),
+    new DateTime('now +1 hour')
+  ),
+  'default value is overriden by valid value'
+);
 
 $t->diag('test not valid value');
 try
@@ -34,40 +49,108 @@ $v = new chCmsParamDateIntervalValidator(array(
 ));
 
 $t->diag('test not valid value (interval too small)');
+$interval = makeInterval('now', '+1 hour');
 try
 {
-  $v->clean('1 hour');
+  $t->is(
+    $v->clean($interval),
+    array(
+      new DateTime('now'),
+      new DateTime('now +1 hour')
+    ),
+    'default value is overriden by valid value'
+  );
   $t->fail('invalid data should throw an exception');
 }
 catch(sfValidatorError $e)
 {
   $t->pass('invalid parameter throw an exception');
-  $t->is($e->getMessage(), 'Invalid interval "1 hour".', 'exception embed expected message');
-  $t->is($e->getCode(), 'invalid', 'exception embed expected code "%code%"');
+  $t->is($e->getMessage(), sprintf('Incorrect interval "%s".', $interval), 'exception embed expected message');
+  $t->is($e->getCode(), 'inconsistent', 'exception embed expected code "%code%"');
 }
 
 $t->diag('test valid value');
-$t->is($v->clean('+2 hour'), '+2 hour', 'a large enough interval is valid');
+$t->is(
+  $v->clean(makeInterval('now', '+2 hour')),
+  array(
+    new DateTime('now'),
+    new DateTime('now +2 hour')
+  ),
+  'a large enough interval is valid'
+);
 
 
 $v = new chCmsParamDateIntervalValidator(array(
-  'min_interval'  => '2 hour',
-  'current_date'  => strtotime('now +1 hour')
+  'max_interval'  => '2 hour',
 ));
 
 $t->diag('test not valid value (interval too small)');
+$interval = makeInterval('now', '+3 hour');
 try
 {
-  $v->clean('1 hour');
+  $t->is(
+    $v->clean($interval),
+    array(
+      new DateTime('now'),
+      new DateTime('now +3 hour')
+    ),
+    'default value is overriden by valid value'
+  );
   $t->fail('invalid data should throw an exception');
 }
 catch(sfValidatorError $e)
 {
   $t->pass('invalid parameter throw an exception');
-  $t->is($e->getMessage(), 'Invalid interval "1 hour".', 'exception embed expected message');
-  $t->is($e->getCode(), 'invalid', 'exception embed expected code "%code%"');
+  $t->is($e->getMessage(), sprintf('Incorrect interval "%s".', $interval), 'exception embed expected message');
+  $t->is($e->getCode(), 'inconsistent', 'exception embed expected code "%code%"');
 }
 
 $t->diag('test valid value');
-$t->is($v->clean('+2 hour'), '+2 hour', 'a large enough interval is valid');
+$t->is(
+  $v->clean(makeInterval('now', '+1 hour')),
+  array(
+    new DateTime('now'),
+    new DateTime('now +1 hour')
+  ),
+  'a large enough interval is valid'
+);
 
+$interval = makeInterval('+1 hour', 'now');
+try
+{
+  $t->is(
+    $v->clean($interval),
+    array(
+      new DateTime('now +3 hour'),
+      new DateTime('now'),
+    ),
+    'default value is overriden by valid value'
+  );
+  $t->fail('invalid data should throw an exception');
+}
+catch(sfValidatorError $e)
+{
+  $t->pass('invalid parameter throw an exception');
+  $t->is($e->getMessage(), sprintf('Incorrect interval "%s".', $interval), 'exception embed expected message');
+  $t->is($e->getCode(), 'inconsistent', 'exception embed expected code "%code%"');
+}
+
+$interval = makeInterval('now -1 hour', '+1 hour');
+try
+{
+  $t->is(
+    $v->clean($interval),
+    array(
+      new DateTime('now -1 hour'),
+      new DateTime('+1 hour'),
+    ),
+    'default value is overriden by valid value'
+  );
+  $t->fail('invalid data should throw an exception');
+}
+catch(sfValidatorError $e)
+{
+  $t->pass('invalid parameter throw an exception');
+  $t->is($e->getMessage(), sprintf('Incorrect interval "%s".', $interval), 'exception embed expected message');
+  $t->is($e->getCode(), 'inconsistent', 'exception embed expected code "%code%"');
+}

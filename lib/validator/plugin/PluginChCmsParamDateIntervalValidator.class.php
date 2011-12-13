@@ -25,18 +25,32 @@ class PluginChCmsParamDateIntervalValidator extends chCmsValidatorApiBase
   protected function configure($options = array(), $messages = array())
   {
     $this->addOption('default', null);
-    $this->addOption('current_date', time());
+    $this->addOption('separator', '|');
+    $this->addOption('min_start', strtotime('today'));
     $this->addOption('min_interval', null);
+    $this->addOption('max_interval', '1 week');
+    $this->addOption('date_validator', null);
+
     $this->setMessage('invalid', 'Invalid interval "%interval%".');
+    $this->addMessage('inconsistent', 'Incorrect interval "%interval%".');
 
     parent::configure($options, $messages);
   }
 
-  public function getCurrentDate()
+  protected function getDateValidator()
   {
-    $cur_date = $this->getOption('current_date');
+    $validator = $this->getOption('date_validator');
+    if ($validator)
+    {
+      return $validator;
+    }
 
-    return is_numeric($cur_date) ? $cur_date : strtotime($cur_date);
+    return new chCmsParamDateValidator(array('required' => true));
+  }
+
+  protected function validateDate($date)
+  {
+    return $this->getDateValidator()->clean($date);
   }
 
   /**
@@ -44,31 +58,49 @@ class PluginChCmsParamDateIntervalValidator extends chCmsValidatorApiBase
    */
   protected function doClean($value)
   {
-    // will iterate through the days, hours, etc.
-    foreach (DateInterval::createFromDateString($value) as $val)
+    $dates = explode($this->getOption('separator'), $value);
+
+    // we should have a start and an end date.
+    if (count($dates) !== 2)
     {
-      if ($val !== 0)
+      throw new sfValidatorError($this, 'invalid', array('interval' => $value));
+    }
+
+    $start = $this->validateDate($dates[0]);
+    $end = $this->validateDate($dates[1]);
+
+    // now that we have our dates, let's check if they are consistent
+    if ($start >= $end)
+    {
+      throw new sfValidatorError($this, 'inconsistent', array('interval' => $value));
+    }
+
+    if ($min_start = $this->getOption('min_start'))
+    {
+      if ($start->getTimestamp() < $min_start)
       {
-        if (!($min_interval = $this->getOption('min_interval')))
-        {
-          return $value;
-        }
-
-        $interval_end = strtotime($value, $this->getCurrentDate());
-        $min_end = strtotime($min_interval, $this->getCurrentDate());
-
-        // the given interval is greater than the minimum interval
-        if ($interval_end >= $min_end)
-        {
-          return $value;
-        }
-
-        // we found a non-null value, stop the iteration process
-        break;
+        throw new sfValidatorError($this, 'inconsistent', array('interval' => $value));
       }
     }
 
-    // all the values are equal to 0, the interval is incorrect
-    throw new sfValidatorError($this, 'invalid', array('interval' => $value));
+    // min interval check
+    if ($min_interval = $this->getOption('min_interval'))
+    {
+      if (($end->getTimestamp() - $start->getTimestamp()) < strtotime($min_interval) - time())
+      {
+        throw new sfValidatorError($this, 'inconsistent', array('interval' => $value));
+      }
+    }
+
+    // max interval check
+    if ($max_interval = $this->getOption('max_interval'))
+    {
+      if (($end->getTimestamp() - $start->getTimestamp()) > strtotime($max_interval) - time())
+      {
+        throw new sfValidatorError($this, 'inconsistent', array('interval' => $value));
+      }
+    }
+
+    return array($start, $end);
   }
 } // END OF PluginChCmsParamDateIntervalValidator

@@ -31,6 +31,7 @@ function chCmsApiPlugin_autoload_again($class)
   return $autoload->autoload($class);
 }
 spl_autoload_register('chCmsApiPlugin_autoload_again');
+date_default_timezone_set('Europe/Paris');
 
 if (file_exists($config = dirname(__FILE__).'/../../config/chCmsApiPluginConfiguration.class.php'))
 {

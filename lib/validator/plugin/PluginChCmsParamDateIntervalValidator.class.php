@@ -19,6 +19,8 @@ class PluginChCmsParamDateIntervalValidator extends chCmsValidatorApiBase
    * add following options :
    *  - default (null) the default value if no given data
    *
+   * @note This validator should be used as post-validator
+   *
    * @param array $options  the validator options
    * @param array $messages error messages
    */
@@ -30,6 +32,9 @@ class PluginChCmsParamDateIntervalValidator extends chCmsValidatorApiBase
     $this->addOption('min_interval', null);
     $this->addOption('max_interval', '1 week');
     $this->addOption('date_validator', null);
+    $this->addOption('start_field', 'start_date');
+    $this->addOption('end_field', 'end_date');
+    $this->addOption('interval_field', 'interval');
 
     $this->setMessage('invalid', 'Invalid interval "%interval%".');
     $this->addMessage('inconsistent', 'Incorrect interval "%interval%".');
@@ -58,6 +63,41 @@ class PluginChCmsParamDateIntervalValidator extends chCmsValidatorApiBase
    */
   protected function doClean($value)
   {
+    // the validator is not used as post-validator
+    if (!is_array($value))
+    {
+      return $this->trySplitInterval($value);
+    }
+
+    $interval_field = $this->getOption('interval_field');
+
+    // the validator is used as a post-validator
+    // and the "inverval" field is given
+    if (!empty($value[$interval_field]))
+    {
+      $value[$interval_field] = $this->trySplitInterval($value[$interval_field]);
+      return $value;
+    }
+    else if (!empty($value[$this->getOption('start_field')]) && !empty($value[$this->getOption('end_field')]))
+    {
+      $value[$interval_field] = $this->cleanInterval(
+        $value[$this->getOption('start_field')],
+        $value[$this->getOption('end_field')]
+      );
+
+      return $value;
+    }
+
+    if ($this->getOption('required', true))
+    {
+      throw new sfValidatorError($this, 'required');
+    }
+
+    return $value;
+  }
+
+  protected function trySplitInterval($value)
+  {
     $dates = explode($this->getOption('separator'), $value);
 
     // we should have a start and an end date.
@@ -66,20 +106,27 @@ class PluginChCmsParamDateIntervalValidator extends chCmsValidatorApiBase
       throw new sfValidatorError($this, 'invalid', array('interval' => $value));
     }
 
-    $start = $this->validateDate($dates[0]);
-    $end = $this->validateDate($dates[1]);
+    return $this->cleanInterval($dates[0], $dates[1]);
+  }
+
+  protected function cleanInterval($origin_start, $origin_end)
+  {
+    $start = $this->validateDate($origin_start);
+    $end = $this->validateDate($origin_end);
+
+    $interval = implode($this->getOption('separator'), array($origin_start, $origin_end));
 
     // now that we have our dates, let's check if they are consistent
     if ($start >= $end)
     {
-      throw new sfValidatorError($this, 'inconsistent', array('interval' => $value));
+      throw new sfValidatorError($this, 'inconsistent', array('interval' => $interval));
     }
 
     if ($min_start = $this->getOption('min_start'))
     {
       if ($start->getTimestamp() < $min_start)
       {
-        throw new sfValidatorError($this, 'inconsistent', array('interval' => $value));
+        throw new sfValidatorError($this, 'inconsistent', array('interval' => $interval));
       }
     }
 
@@ -88,7 +135,7 @@ class PluginChCmsParamDateIntervalValidator extends chCmsValidatorApiBase
     {
       if (($end->getTimestamp() - $start->getTimestamp()) < strtotime($min_interval) - time())
       {
-        throw new sfValidatorError($this, 'inconsistent', array('interval' => $value));
+        throw new sfValidatorError($this, 'inconsistent', array('interval' => $interval));
       }
     }
 
@@ -97,7 +144,7 @@ class PluginChCmsParamDateIntervalValidator extends chCmsValidatorApiBase
     {
       if (($end->getTimestamp() - $start->getTimestamp()) > strtotime($max_interval) - time())
       {
-        throw new sfValidatorError($this, 'inconsistent', array('interval' => $value));
+        throw new sfValidatorError($this, 'inconsistent', array('interval' => $interval));
       }
     }
 

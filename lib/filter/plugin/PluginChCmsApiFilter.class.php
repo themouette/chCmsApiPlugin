@@ -31,7 +31,7 @@ class PluginChCmsApiFilter extends sfFilter
 
         $response->setContentTypeForFormat($request->getRequestFormat());
 
-        $this->validateRequestParamters();
+        $this->validateRequestParameters();
 
         $filterChain->execute();
       }
@@ -75,7 +75,7 @@ class PluginChCmsApiFilter extends sfFilter
    * @return void
    * @throw chCmsApiErrorException if paramters are invalid
    */
-  protected function validateRequestParamters()
+  protected function validateRequestParameters()
   {
     $response = $this->getContext()->getResponse();
     $request  = $this->getContext()->getRequest();

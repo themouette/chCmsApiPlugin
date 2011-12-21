@@ -33,6 +33,12 @@ class PluginChCmsApiDateTimePropertyFormatter extends chCmsApiPropertyFormatter
   public function format($date)
   {
     $format = $this->getOption('format');
-    return parent::format($date)->format($format);
+
+    $dateObj = parent::format($date);
+    if (!($dateObj instanceof DateTime))
+    {
+      $dateObj = new DateTime($dateObj);
+    }
+    return $dateObj->format($format);
   }
 } // END OF PluginChCmsApiDateTimePropertyFormatter

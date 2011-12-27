@@ -230,36 +230,36 @@ class chCmsApiArrayFormatter extends BasechCmsApiFormatter implements ArrayAcces
     return $object[$field_name];
   }
 
-	/**
-	 * @see        http://www.php.net/ArrayAccess
-	 */
-	public function offsetExists($offset)
-	{
-		return isset($this->options['fields'][$offset]) || array_key_exists($offset, $this->options['fields']);
-	}
+  /**
+   * @see        http://www.php.net/ArrayAccess
+   */
+  public function offsetExists($offset)
+  {
+    return isset($this->options['fields'][$offset]) || array_key_exists($offset, $this->options['fields']);
+  }
 
-	/**
-	 * @see        http://www.php.net/ArrayAccess
-	 */
-	public function offsetSet($offset, $value)
-	{
-		$this->formatField[$offset] = $value;
-	}
+  /**
+   * @see        http://www.php.net/ArrayAccess
+   */
+  public function offsetSet($offset, $value)
+  {
+    $this->formatField[$offset] = $value;
+  }
 
-	/**
-	 * @see        http://www.php.net/ArrayAccess
-	 */
-	public function offsetGet($offset)
-	{
-		return $this->options['fields'][$offset];
-	}
+  /**
+   * @see        http://www.php.net/ArrayAccess
+   */
+  public function offsetGet($offset)
+  {
+    return $this->options['fields'][$offset];
+  }
 
-	/**
-	 * @see        http://www.php.net/ArrayAccess
-	 */
-	public function offsetUnset($offset)
-	{
-		unset($this->options['fields'][$offset]);
-	}
+  /**
+   * @see        http://www.php.net/ArrayAccess
+   */
+  public function offsetUnset($offset)
+  {
+    unset($this->options['fields'][$offset]);
+  }
 } // END OF chCmsApiArrayFormatter
 

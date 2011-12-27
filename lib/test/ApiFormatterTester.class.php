@@ -13,7 +13,45 @@
  * the formatter tester class
  */
 class ApiFormatterTester extends lime_test
-{
+{  
+  /**
+   * return the validator class name
+   *
+   * @return String
+   */
+  protected function getClassname()
+  {
+    throw new Exception('define me');
+  }
+
+  /**
+   * instanciate a formatter for testing
+   *
+   * @param array|null $options the options overrides
+   * @return BasechCmsApiFormatter
+   */
+  protected function getFormatter($options = null, $fields = array())
+  {
+    if (is_null($options))
+    {
+      $options = $this->getDefaultFormatterOptions();
+    }
+
+    $class = $this->getClassname();
+
+    return new $class($fields, $options);
+  }
+
+  /**
+   * Return the default options to instanciate a new validator.
+   *
+   * @return array
+   */
+  protected function getDefaultFormatterOptions($options = array())
+  {
+    return array();
+  }
+
   /**
    * execute every method starting with "test"
    *

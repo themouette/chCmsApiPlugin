@@ -13,7 +13,7 @@
  * the formatter tester class
  */
 class ApiFormatterTester extends lime_test
-{  
+{
   /**
    * return the validator class name
    *
@@ -118,7 +118,7 @@ class ApiFormatterTester extends lime_test
       $this->pass($test_message);
       return true;
     }
-    catch(ApiFormatterTesterException $e)
+    catch (ApiFormatterTesterException $e)
     {
       $this->fail($test_message);
       return false;
@@ -141,7 +141,7 @@ class ApiFormatterTester extends lime_test
       $this->pass($test_message);
       return true;
     }
-    catch(ApiFormatterTesterException $e)
+    catch (ApiFormatterTesterException $e)
     {
       $this->fail($test_message);
       return false;
@@ -169,12 +169,12 @@ class ApiFormatterTester extends lime_test
       {
         $this->internal_compare_collection($value, $reference_object[$key]);
       }
-      elseif ($value instanceof stdClass)
+      else if ($value instanceof stdClass)
       {
         $this->internal_compare_object($value, $reference_object[$key]);
       }
-      elseif(!(array_key_exists($key, $reference_object) && ($value === $reference_object[$key])) &&
-             !(is_numeric($key) && (($num_key = (int) $key) || true) && // convert numeric key
+      else if(!(array_key_exists($key, $reference_object) && ($value === $reference_object[$key])) &&
+              !(is_numeric($key) && (($num_key = (int) $key) || true) && // convert numeric key
                 array_key_exists($num_key, $reference_object) && ($value === $reference_object[$num_key])))
       {
         $this->set_last_test_errors(array(

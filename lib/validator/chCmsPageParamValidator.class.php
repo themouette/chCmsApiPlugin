@@ -44,7 +44,7 @@ class chCmsPageParamValidator extends sfValidatorInteger
     {
       return parent::doClean($value);
     }
-    catch(sfValidatorError $e)
+    catch (sfValidatorError $e)
     {
       if ('max' === $e->getCode())
       {

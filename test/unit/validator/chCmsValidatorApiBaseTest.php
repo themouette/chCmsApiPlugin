@@ -21,14 +21,14 @@ try
 {
   $v->throwApiError('INVALID_PARAMETER', 'my message');
 }
-catch(chCmsApiErrorException $e)
+catch (chCmsApiErrorException $e)
 {
   $t->pass('invalid parameter throw an exception');
   $t->is($e->getMessage(), 'my message', 'exception embed expected message');
   $t->is($e->getApiCode(), 'INVALID_PARAMETER', 'exception embed expected code "INVALID_PARAMETER"');
   $t->like($e->getCode(), "#^4#", 'thrown error is a "4xx"');
 }
-catch(Exception $e)
+catch (Exception $e)
 {
   $t->fail('exception thrown by "throwApiError" should be a "chCmsApiErrorException"');
 }

@@ -29,7 +29,7 @@ try
   $v->clean(null);
   $t->fail('null data should throw an exception');
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->pass('null parameter throw an exception');
   $t->is($e->getMessage(), 'Please provide a date.', 'exception embed expected message');
@@ -42,7 +42,7 @@ try
   $v->clean("2005-08-15");
   $t->fail('invalid data should throw an exception');
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->pass('invalid parameter throw an exception');
   $t->is($e->getMessage(), 'Invalid date "2005-08-15".', 'exception embed expected message');

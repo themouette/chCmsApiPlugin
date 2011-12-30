@@ -18,7 +18,7 @@ try
   $v->clean(null);
   $t->fail('required does not throw exception if no value is provided');
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->pass('required option requires a value');
 }
@@ -34,7 +34,7 @@ try
   $v->clean("test");
   $t->fail('invalid data should throw an exception');
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->pass('invalid parameter throw an exception');
   $t->is($e->getMessage(), 'please provide lat/long array', 'exception embed expected message');
@@ -46,7 +46,7 @@ try
   $v->clean(array('lat' => -180.0000234, 'long' => 80.000023));
   $t->fail('invalid data should throw an exception');
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->pass('invalid parameter throw an exception');
   $t->is($e->getMessage(), 'Invalid.', 'exception embed expected message');
@@ -58,7 +58,7 @@ try
   $v->clean(array('lat' => -780.0000234, 'long' => -280.000023));
   $t->fail('invalid data should throw an exception');
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->pass('invalid parameter throw an exception');
   $t->is($e->getMessage(), 'Invalid.', 'exception embed expected message');

@@ -61,7 +61,7 @@ class PluginChCmsParamCoordinatesValidator extends chCmsValidatorApiBase
       );
 
     }
-    catch(sfValidatorError $e)
+    catch (sfValidatorError $e)
     {
       throw new sfValidatorError($this, 'invalid', array());
     }

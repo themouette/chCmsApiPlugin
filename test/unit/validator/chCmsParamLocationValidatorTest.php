@@ -19,7 +19,7 @@ try
   $v->clean(null);
   $t->fail('required does not throw exception if no value is provided');
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->pass('required option requires a value');
 }
@@ -34,7 +34,7 @@ try
   $r = $v->clean("kkjsdqmlkj");
   $t->fail('invalid data should throw an exception');
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->pass('invalid parameter throw an exception');
   $t->is($e->getMessage(), 'Invalid data "%message%".', 'exception embed expected message');
@@ -46,7 +46,7 @@ try
   $v->clean("un");
   $t->fail('invalid data should throw an exception');
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->pass('invalid parameter throw an exception');
   $t->is($e->getMessage(), '"%value%" is too short (%min_length% characters min).', 'exception embed expected message');

@@ -17,7 +17,7 @@ try
   $v->clean("*");
   $t->fail('any data should throw an exception');
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->pass('invalid parameter throw an exception');
   $t->is($e->getMessage(), 'this parameter is not implmented yet.', 'exception embed expected message');

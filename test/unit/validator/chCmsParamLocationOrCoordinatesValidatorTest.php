@@ -14,7 +14,7 @@ try
   $v->clean(null);
   $t->fail();
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->pass('empty values throw an exception');
   $t->is($e->getMessage(), 'You must provide a "%location%" or a "%coordinates%" field.', 'exception embed expected message');
@@ -57,11 +57,11 @@ try
   $v->clean("%bad param%");
   $t->fail('invalid data should throw an exception');
 }
-catch(sfValidatorError $e)
+catch (sfValidatorError $e)
 {
   $t->fail('invalid data throws an API error, validator error encountered');
 }
-catch(chCmsApiErrorException $e)
+catch (chCmsApiErrorException $e)
 {
   $t->pass('invalid parameter throw an exception');
   $t->is($e->getMessage(), 'You must provide only one of "baz" or "bar" field.', 'exception embed expected message');

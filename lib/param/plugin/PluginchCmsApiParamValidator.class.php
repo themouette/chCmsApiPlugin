@@ -138,7 +138,7 @@ class PluginchCmsApiParamValidator extends BaseForm
     {
       parent::doBind($values);
     }
-    catch(chCmsApiErrorException $e)
+    catch (chCmsApiErrorException $e)
     {
       $e->setParameters($values);
       throw $e;

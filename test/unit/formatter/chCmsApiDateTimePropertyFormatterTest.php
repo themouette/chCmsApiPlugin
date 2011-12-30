@@ -74,7 +74,7 @@ class chCmsApiDateTimePropertyFormatterTest extends ApiFormatterTester
 
       $this->is($formatter->format($obj), $expected, $message);
     }
-    catch(Exception $e)
+    catch (Exception $e)
     {
       $this->fail(sprintf('formatter sent an exception %s', get_class($e)));
       $this->set_last_test_errors(array(

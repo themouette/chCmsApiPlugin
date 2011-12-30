@@ -46,7 +46,7 @@ catch (chCmsError406Exception $e)
       'message' => 'message'),
     'returned error is what expected');
 }
-catch(Exception $e)
+catch (Exception $e)
 {
   $t->fail('unknown exception was thrown');
 }
@@ -70,7 +70,7 @@ catch (chCmsError406Exception $e)
       'parameters' => 'params'),
     'returned error is what expected');
 }
-catch(Exception $e)
+catch (Exception $e)
 {
   $t->fail('unknown exception was thrown');
 }
@@ -95,7 +95,7 @@ catch (chCmsError406Exception $e)
       'parameters' => 'params'),
     'returned error is what expected');
 }
-catch(Exception $e)
+catch (Exception $e)
 {
   $t->fail('unknown exception was thrown');
 }
@@ -109,7 +109,7 @@ catch (chCmsError406Exception $e)
 {
   $t->fail('action was redirected');
 }
-catch(Exception $e)
+catch (Exception $e)
 {
   $t->fail('unknown exception was thrown');
 }
@@ -134,7 +134,7 @@ catch (chCmsError406Exception $e)
       'parameters' => 'params'),
     'returned error is what expected');
 }
-catch(Exception $e)
+catch (Exception $e)
 {
   $t->fail('unknown exception was thrown');
 }
@@ -148,7 +148,7 @@ catch (chCmsError406Exception $e)
 {
   $t->fail('action was redirected');
 }
-catch(Exception $e)
+catch (Exception $e)
 {
   $t->fail('unknown exception was thrown');
 }

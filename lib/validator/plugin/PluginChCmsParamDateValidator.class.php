@@ -48,7 +48,7 @@ class PluginChCmsParamDateValidator extends chCmsValidatorApiBase
     {
       $date = new DateTime($default);
     }
-    catch(Exception $e)
+    catch (Exception $e)
     {
       $date = DateTime::createFromFormat($this->getOption('format', DateTime::ISO8601), $default);
     }
@@ -65,7 +65,7 @@ class PluginChCmsParamDateValidator extends chCmsValidatorApiBase
     {
       $date = DateTime::createFromFormat($this->getOption('format', DateTime::ISO8601), $value);
     }
-    catch(Exception $e)
+    catch (Exception $e)
     {
       throw new sfValidatorError($this, 'error', array('error' => $e->getMessage(), 'date' => $value));
     }

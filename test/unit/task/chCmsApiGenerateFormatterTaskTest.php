@@ -28,7 +28,7 @@ try
   $task->getGenerationPath(array(), array('plugin' => 'sfUnknownPlugin'));
   $t->fail('unknown plugin should throw an InvalidArgumentException');
 }
-catch(InvalidArgumentException $e)
+catch (InvalidArgumentException $e)
 {
   $t->pass('unknown plugin throws InvalidArgumentException');
 }

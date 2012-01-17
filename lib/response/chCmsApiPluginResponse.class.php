@@ -119,6 +119,18 @@ class chCmsApiPluginResponse
   }
 
   /**
+   * format html style api response
+   *
+   * @param mixed   $result     api result to format
+   * @param sfRequest $request    the current request
+   * @return String
+   */
+  public static function formatApiResultHtml($sf_response, $result, $request)
+  {
+    return sprintf('<!DOCTYPE html><html><head></head><body>%s</body></html>', var_export($result, true));
+  }
+
+  /**
    * format response in json format
    * also handle jsonp.
    *

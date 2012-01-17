@@ -32,7 +32,14 @@ class chCmsApiTools
    */
   public static function getAvailableFormats($extra = array())
   {
-    return array_merge(array('json', 'jsonp', 'xml'), $extra);
+    $formats = array_merge(array('json', 'jsonp', 'xml'), $extra);
+
+    if (sfConfig::get('sf_debug', false))
+    {
+      $formats[] = 'html';
+    }
+
+    return $formats;
   }
 
   /**

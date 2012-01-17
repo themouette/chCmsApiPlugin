@@ -14,6 +14,9 @@
  */
 class PluginChCmsApiFilter extends sfFilter
 {
+  /** debug timers */
+  protected $timers;
+
   /**
    * excute the filter
    **/
@@ -24,16 +27,35 @@ class PluginChCmsApiFilter extends sfFilter
 
     if ($actionInstance instanceof chCmsApiActions)
     {
+      $this->initTimer('chCmsApiFilter');
+
       try
       {
         $response = $this->getContext()->getResponse();
         $request  = $this->getContext()->getRequest();
 
-        $response->setContentTypeForFormat($request->getRequestFormat());
+        try
+        {
+          $this->initTimer('Api request parsing');
 
-        $this->validateRequestParameters();
+          $response->setContentTypeForFormat($request->getRequestFormat());
+
+          $this->validateRequestParameters();
+
+          $this->endTimer('Api request parsing');
+        }
+        catch(Exception $e)
+        {
+          $this->endTimer('Api request parsing');
+
+          throw $e;
+        }
+
+        $this->initTimer('Api action processing');
 
         $filterChain->execute();
+
+        $this->endTimer('Api action processing');
       }
       catch (chCmsApiErrorException $e)
       {
@@ -61,6 +83,8 @@ class PluginChCmsApiFilter extends sfFilter
                             : 'this ressource is protected') ), $request);
         }
       }
+
+      $this->endTimer('chCmsApiFilter');
     }
     else
     {
@@ -140,5 +164,34 @@ class PluginChCmsApiFilter extends sfFilter
     }
 
     return array('error' => $result);
+  }
+
+  /**
+   * get the dedicated timer
+   *
+   * @param String $name timer name.
+   * @return sfTimer
+   */
+  protected function initTimer($name)
+  {
+    $is_debug = sfConfig::get('sf_debug');
+    if ($is_debug)
+    {
+      return $this->timer[$name] = sfTimerManager::getTimer($name);
+    }
+  }
+
+  /**
+   * closes a dedicated timer
+   *
+   * @param String $name timer name.
+   */
+  protected function endTimer($name)
+  {
+    $is_debug = sfConfig::get('sf_debug');
+    if ($is_debug)
+    {
+      return $this->timer[$name]->addTime();
+    }
   }
 } // END OF PluginChCmsApiFilter

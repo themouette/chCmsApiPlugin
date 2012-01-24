@@ -34,28 +34,8 @@ class PluginChCmsApiFilter extends sfFilter
         $response = $this->getContext()->getResponse();
         $request  = $this->getContext()->getRequest();
 
-        try
-        {
-          $this->initTimer('Api request parsing');
-
-          $response->setContentTypeForFormat($request->getRequestFormat());
-
-          $this->validateRequestParameters();
-
-          $this->endTimer('Api request parsing');
-        }
-        catch(Exception $e)
-        {
-          $this->endTimer('Api request parsing');
-
-          throw $e;
-        }
-
-        $this->initTimer('Api action processing');
-
         $filterChain->execute();
 
-        $this->endTimer('Api action processing');
       }
       catch (chCmsApiErrorException $e)
       {
@@ -89,59 +69,6 @@ class PluginChCmsApiFilter extends sfFilter
     else
     {
       $filterChain->execute();
-    }
-  }
-
-  /**
-   * execute the request parameter validation
-   * and update request parameters
-   *
-   * @return void
-   * @throw chCmsApiErrorException if paramters are invalid
-   */
-  protected function validateRequestParameters()
-  {
-    $response = $this->getContext()->getResponse();
-    $request  = $this->getContext()->getRequest();
-    $route    = $request->getAttribute('sf_route');
-
-    // check there is a validator
-    if ($paramValidator = $this->getParamValidatorForRoute($route))
-    {
-      $request->setParamValidator($paramValidator);
-      $paramValidator->processApiRequest($request);
-    }
-  }
-
-  /**
-   * create the param_validator object
-   *
-   * @return chCmsApiParamValidator
-   */
-  protected function getParamValidatorForRoute($route)
-  {
-    $options  = $route->getOptions();
-
-    // set default options
-    $options = array_merge(array(
-          'param_validator'       => false,
-          'param_validator_args'  => array()), $options);
-
-    switch (true)
-    {
-      case is_object($options['param_validator']) && is_callable(array($options['param_validator'], 'processApiRequest')):
-        // object is already instanciate
-        return $options['param_validator'];
-
-      case (bool) $options['param_validator']:
-        // class name and arguments
-        $r = new ReflectionClass($options['param_validator']);
-        return $r->newInstanceArgs($options['param_validator_args']);
-
-      default:
-        // no validator to call
-        // return
-        return false;
     }
   }
 

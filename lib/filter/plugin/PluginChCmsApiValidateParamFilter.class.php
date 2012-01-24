@@ -34,8 +34,6 @@ class PluginChCmsApiValidateParamFilter extends sfFilter
       {
         $this->initTimer('Api request parsing');
 
-        $response->setContentTypeForFormat($request->getRequestFormat());
-
         $this->validateRequestParameters();
 
         $this->endTimer('Api request parsing');

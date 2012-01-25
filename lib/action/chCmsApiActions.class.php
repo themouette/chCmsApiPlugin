@@ -112,6 +112,39 @@ abstract class chCmsApiActions extends chCmsActions
   }
 
   /**
+   * returns form errors as api error.
+   *
+   * @return void
+   */
+  public function renderInvalidForm($errorMessage, $form, $errorCode = null)
+  {
+    // extract error schema
+    $schema = $this->extractErrorSchema($form->getErrorSchema());
+    throw new chCmsError406Exception(
+          is_null($errorCode) ? $this->getDefaultErrorCode() : $errorCode,
+          $errorMessage,
+          $errors);
+  }
+
+  protected function extractErrorSchema($errors)
+  {
+    $schema = array();
+    $i18n = $this->getContext()->getI18n();
+    foreach ($errors as $field => $validator)
+    {
+      if ($validator instanceof sfValidatorErrorSchema)
+      {
+        $schema[$field] = $this->extractErrorSchema($validator);
+      }
+      else
+      {
+        $schema[$field] = $i18n->__($validator->getMessageFormat(), $validator->getArguments());
+      }
+    }
+    return $schema;
+  }
+
+  /**
    * formate a result object/array into a string matching request format.
    *
    * @param Mixed $result the result to format.

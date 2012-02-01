@@ -137,12 +137,12 @@ catch (sfValidatorError $e)
 
 $t->diag('test valid value, using the validator as a post-validator');
 $t->is(
-  $v->clean(makePostValidatorInterval('now', '+1 hour')),
+  $v->clean($interval = makePostValidatorInterval('now', '+1 hour')),
   array_merge(
-    makePostValidatorInterval('now', '+1 hour'), array(
+    $interval, array(
       'interval' => array(
-        new DateTime('now'),
-        new DateTime('now +1 hour')
+        new DateTime($interval['start_date']),
+        new DateTime($interval['end_date'])
       )
     )
   ),

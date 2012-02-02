@@ -173,7 +173,7 @@ class ApiFormatterTester extends lime_test
       {
         $this->internal_compare_object($value, $reference_object[$key]);
       }
-      else if(!(array_key_exists($key, $reference_object) && ($value === $reference_object[$key])) &&
+      else if (!(array_key_exists($key, $reference_object) && ($value === $reference_object[$key])) &&
               !(is_numeric($key) && (($num_key = (int) $key) || true) && // convert numeric key
                 array_key_exists($num_key, $reference_object) && ($value === $reference_object[$num_key])))
       {
@@ -182,8 +182,8 @@ class ApiFormatterTester extends lime_test
           sprintf("           got: %s", str_replace("\n", '', var_export($value, true))),
           sprintf("      expected: %s", str_replace("\n", '', array_key_exists($key, $reference_object)
                                                               ? var_export($reference_object[$key], true)
-                                                              : ((is_numeric($key) && array_key_exists((int)$key, $reference_object))
-                                                                  ? var_export($reference_object[(int)$key], true)
+                                                              : ((is_numeric($key) && array_key_exists((int) $key, $reference_object))
+                                                                  ? var_export($reference_object[(int) $key], true)
                                                                   : '"undefined"'))))
         );
         throw new ApiFormatterTesterException();

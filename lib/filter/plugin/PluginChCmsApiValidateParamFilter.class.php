@@ -38,7 +38,7 @@ class PluginChCmsApiValidateParamFilter extends sfFilter
 
         $this->endTimer('Api request parsing');
       }
-      catch(Exception $e)
+      catch (Exception $e)
       {
         $this->endTimer('Api request parsing');
 

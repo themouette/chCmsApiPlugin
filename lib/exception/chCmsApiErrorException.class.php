@@ -43,34 +43,34 @@ class chCmsApiErrorException extends sfException
    */
    protected $parameters;
 
-   /**
-    * the exception error code
-    * @access protected
-    * @var mixed
-    */
-    protected $api_code;
+  /**
+   * the exception error code
+   * @access protected
+   * @var mixed
+   */
+  protected $api_code;
 
-   /**
-    * getter for api_code
-    * @access public
-    *
-    * @return mixed the api_code value
-    */
-   public function getApiCode()
-   {
-     return $this->api_code;
-   }
+  /**
+   * getter for api_code
+   * @access public
+   *
+   * @return mixed the api_code value
+   */
+  public function getApiCode()
+  {
+    return $this->api_code;
+  }
 
-   /**
-    * setter for api_code
-    * @access public
-    *
-    * @return mixed the api_code value
-    */
-   public function setApiCode($api_code)
-   {
-     return $this->api_code = $error_code;
-   }
+  /**
+   * setter for api_code
+   * @access public
+   *
+   * @return mixed the api_code value
+   */
+  public function setApiCode($api_code)
+  {
+    return $this->api_code = $error_code;
+  }
 
 
   /**

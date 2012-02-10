@@ -6,11 +6,22 @@ $t = new lime_test(9, new lime_output_color());
 
 class TestchCmsApiGenerateValidatorTask extends chCmsApiGenerateValidatorTask
 {
-  public function __construct(){}
+  public function __construct()
+  {
+  }
 
-  public function getValidatorClassname($name) {return parent::getValidatorClassname($name);}
-  public function getGenerationLibPath($arguments, $options) {return parent::getGenerationLibPath($arguments, $options);}
-  public function getGenerationTestPath($arguments, $options) {return parent::getGenerationTestPath($arguments, $options);}
+  public function getValidatorClassname($name)
+  {
+    return parent::getValidatorClassname($name);
+  }
+  public function getGenerationLibPath($arguments, $options)
+  {
+    return parent::getGenerationLibPath($arguments, $options);
+  }
+  public function getGenerationTestPath($arguments, $options)
+  {
+    return parent::getGenerationTestPath($arguments, $options);
+  }
 }
 
 $t->diag('test utility methods');

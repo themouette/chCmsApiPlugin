@@ -5,12 +5,15 @@ $t = new ApiFormatterTester(41, new lime_output_color());
 
 class TestObjectFormatter extends chCmsApiObjectFormatter
 {
-  function initialize()
+  public function initialize()
   {
     $this->setDefaultFormatFields(array('foo_bar'));
   }
 
-  function getFieldFormatter($output_name, $formatter = null) {return parent::getFieldFormatter($output_name, $formatter);}
+  public function getFieldFormatter($output_name, $formatter = null)
+  {
+    return parent::getFieldFormatter($output_name, $formatter);
+  }
 }
 
 $obj = new chCmsApiFormatterTestObject();

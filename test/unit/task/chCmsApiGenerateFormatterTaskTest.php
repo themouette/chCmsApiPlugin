@@ -6,10 +6,18 @@ $t = new lime_test(6, new lime_output_color());
 
 class TestchCmsApiGenerateFormatterTask extends chCmsApiGenerateFormatterTask
 {
-  public function __construct(){}
+  public function __construct()
+  {
+  }
 
-  public function getFormatterClassname($name) {return parent::getFormatterClassname($name);}
-  public function getGenerationPath($arguments, $options) {return parent::getGenerationPath($arguments, $options);}
+  public function getFormatterClassname($name)
+  {
+    return parent::getFormatterClassname($name);
+  }
+  public function getGenerationPath($arguments, $options)
+  {
+    return parent::getGenerationPath($arguments, $options);
+  }
 }
 
 $t->diag('test utility methods');

@@ -23,7 +23,7 @@ abstract class PluginChCmsValidatorApiBase extends sfValidatorBase
    */
   protected function configure($options = array(), $messages = array())
   {
-    $this->addOption('comment', 'you can provide a comment option to validator.');
+    $this->addOption('comment', '');
   }
   /**
    * throw an API error without validating other values.

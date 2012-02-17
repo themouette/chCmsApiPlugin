@@ -1,0 +1,3 @@
+all:
+  chCmsApiPlugin:
+    docTemplate:  %sf_root_dir%/plugins/chCmsApiPlugin/data/templates/doc.html.php

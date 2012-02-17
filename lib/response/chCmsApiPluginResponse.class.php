@@ -102,8 +102,22 @@ class chCmsApiPluginResponse
 
     // well, try to call given format
     $method = sprintf('formatApiResult%s', sfInflector::camelize($format));
+    $doc_context = $request->hasParameter('_doc');
 
-    return call_user_func(array($sf_response, $method), $result, $request);
+    $formatted_results = call_user_func(
+      array($sf_response, $method),
+      $result, $request, $doc_context
+    );
+
+    if ($doc_context)
+    {
+      $sf_response->setContentType('text/html');
+
+      $formatter = new chCmsDocumentedHtmlResponse();
+      return $formatter->format($formatted_results, $request, $sf_response);
+    }
+
+    return $formatted_results;
   }
 
   /**
@@ -113,7 +127,7 @@ class chCmsApiPluginResponse
    * @param sfRequest $request    the current request
    * @return String
    **/
-  public static function formatApiResultForm($sf_response, $result, $request)
+  public static function formatApiResultForm($sf_response, $result, $request, $for_doc)
   {
     return http_build_query($result);
   }
@@ -125,9 +139,17 @@ class chCmsApiPluginResponse
    * @param sfRequest $request    the current request
    * @return String
    */
-  public static function formatApiResultHtml($sf_response, $result, $request)
+  public static function formatApiResultHtml($sf_response, $result, $request, $for_doc)
   {
-    return sprintf('<!DOCTYPE html><html><head></head><body>%s</body></html>', var_export($result, true));
+    $data = var_export($result, true);
+
+    if ($for_doc)
+    {
+      return $data;
+    }
+
+    $template = '<!DOCTYPE html><html><head></head><body><pre>%s</pre></body></html>';
+    return sprintf($template, $data);
   }
 
   /**
@@ -138,16 +160,37 @@ class chCmsApiPluginResponse
    * @param sfRequest $request    the current request
    * @return String
    **/
-  public static function formatApiResultJson($sf_response, $result, $request)
+  public static function formatApiResultJson($sf_response, $result, $request, $for_doc)
   {
     $callback = $request->getParameter('jsonp', null);
-    $result = json_encode($result);
+
+    if (!$for_doc)
+    {
+      $encoded_result = json_encode($result);
+    }
+    // try to pretty print the json. This is far from perfect, but it does
+    // its job.
+    else
+    {
+      if (version_compare(PHP_VERSION, '5.4', '<'))
+      {
+        $encoded_result = json_encode($result);
+        $pattern = array(',"', '{', '}');
+        $replacement = array(",\n\t\"", "{\n\t", "\n}");
+        $encoded_result = str_replace($pattern, $replacement, $encoded_result);
+      }
+      else
+      {
+        $encoded_result = json_encode($result, JSON_PRETTY_PRINT);
+      }
+    }
 
     if (!is_null($callback))
     {
-      $result = sprintf('%s(%s);', $callback, $result);
+      $encoded_result = sprintf('%s(%s);', $callback, $encoded_result);
     }
-    return $result;
+
+    return $encoded_result;
   }
 
   /**
@@ -157,9 +200,9 @@ class chCmsApiPluginResponse
    * @param sfRequest $request    the current request
    * @return String
    **/
-  public static function formatApiResultJsonp($sf_response, $result, $request)
+  public static function formatApiResultJsonp($sf_response, $result, $request, $for_doc)
   {
-    return $sf_response->formatApiResultJson($result, $request);
+    return $sf_response->formatApiResultJson($result, $request, $for_doc);
   }
 
   /**
@@ -169,7 +212,7 @@ class chCmsApiPluginResponse
    * @param sfRequest $request    the current request
    * @return String
    **/
-  public static function formatApiResultXml($sf_response, $result, $request)
+  public static function formatApiResultXml($sf_response, $result, $request, $for_doc)
   {
     $document = sprintf("<%sxml version=\"1.0\" encoding=\"%s\"%s><root/>",
                   // tricks php short open tags

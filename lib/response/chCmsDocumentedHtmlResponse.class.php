@@ -63,23 +63,7 @@ class chCmsDocumentedHtmlResponse
     $params = array();
     foreach ($paramValidator->getValidatorSchema()->getFields() as $field => $validator)
     {
-      $data = array(
-        'required'  => $validator->getOption('required', true) ? 'yes' : 'no',
-      );
-
-      $default = $validator->getOption('default');
-      if ($default !== null)
-      {
-        $data['default'] = $default;
-      }
-
-      $comment = $validator->getOption('comment');
-      if (!empty($comment))
-      {
-        $data['comment'] = $comment;
-      }
-
-      $params[$field] = $data;
+      $params[$field] = array_map(array($this, 'prepareObjects'), array_filter($validator->getOptions(), array($this, 'filterObjects')));
     }
 
     // retrieve the description from the param validator
@@ -91,6 +75,26 @@ class chCmsDocumentedHtmlResponse
       'PARAMS'      => $params,
       'DESCRIPTION' => $description,
     );
+  }
+
+  public function prepareObjects($var)
+  {
+    if (!$var || is_scalar($var))
+    {
+      return $var;
+    }
+
+    if (is_array($var))
+    {
+      return implode(', ', array_filter($var, array($this,'filterObjects')));
+    }
+
+    return var_export($var, true);
+  }
+
+  public function filterObjects($var)
+  {
+    return !is_object($var);
   }
 
   protected function getDescriptionFromClass($class, $try_parent = true)

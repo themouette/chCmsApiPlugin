@@ -166,7 +166,7 @@ class PluginchCmsApiParamValidator extends BaseForm
     // bind with all the request paramters
     $this->bind($request->getOriginalApiParameters());
 
-    if ( ! $this->isValid() )
+    if (!$this->isValid())
     {
       $this->throwApiError();
     }
@@ -185,10 +185,11 @@ class PluginchCmsApiParamValidator extends BaseForm
   {
     // request is invalid, throw new error
     throw new chCmsApiErrorException(
-          $this->getErrorCode(),
-          $this->getErrorMessage(),
-          $this->options['error_status_code'],
-          $this->getErrorParameters());
+      $this->getErrorCode(),
+      $this->getErrorMessage(),
+      $this->options['error_status_code'],
+      $this->getErrorParameters()
+    );
   }
 
   /**

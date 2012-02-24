@@ -66,7 +66,7 @@
     <tbody>
       <?php foreach ($PARAMS as $name => $data): ?>
       <tr>
-        <th>
+        <td>
           <!-- required -->
           <?php if (isset($data['required'])): ?>
             <?php if ($data['required']): ?>
@@ -85,7 +85,7 @@
           <?php endif; ?>
 
           <span style="margin-left: 10px"><?php echo $name ?></span>
-        </th>
+        </td>
         <td>
           <!-- option comment -->
           <?php if (!empty($data['comment'])): ?>

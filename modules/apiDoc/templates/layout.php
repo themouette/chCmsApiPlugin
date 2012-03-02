@@ -10,7 +10,7 @@
 <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">API Doc</a>
+      <span class="brand">API Doc</span>
     </div>
   </div>
 </div>

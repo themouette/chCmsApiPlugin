@@ -7,12 +7,12 @@
   <link href="/chCmsApiPlugin/js/google-code-prettify/prettify.css" rel="stylesheet">
   <title>API Doc</title>
 </head>
-<body onload="prettyPrint()">
+<body>
 
 <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">API Doc</a>
+      <span class="brand" href="#">API Doc</span>
 
       <div class="nav-collapse">
         <ul class="nav">

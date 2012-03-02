@@ -158,6 +158,20 @@ class ApiFormatterTester extends lime_test
    **/
   public function internal_compare_object($test_object, $reference_object)
   {
+    if (is_scalar($reference_object))
+    {
+      if ($test_object !== $reference_object)
+      {
+        $this->set_last_test_errors(array(
+          sprintf("  > error while comparing two objects:"),
+          sprintf("           got: %s", str_replace("\n", '', var_export($test_object, true))),
+          sprintf("      expected: %s", str_replace("\n", '', var_export($reference_object, true))))
+        );
+        throw new ApiFormatterTesterException();
+      }
+      return;
+    }
+
     if (!is_array($reference_object))
     {
       $reference_object = get_object_vars($reference_object);

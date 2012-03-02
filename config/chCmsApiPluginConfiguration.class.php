@@ -17,7 +17,7 @@ class chCmsApiPluginConfiguration extends sfPluginConfiguration
    */
   public function initialize()
   {
-    $this->dispatcher->connect( 'request.method_not_found', array(
+    $this->dispatcher->connect('request.method_not_found', array(
       'chCmsApiPluginRequest', 'methodNotFound'
     ));
 
@@ -27,6 +27,10 @@ class chCmsApiPluginConfiguration extends sfPluginConfiguration
 
     $this->dispatcher->connect('context.load_factories', array(
       'chCmsApiParamValidator', 'listenToLoadFactoryEvent'
+    ));
+
+    $this->dispatcher->connect('routing.load_configuration', array(
+      'chCmsApiPluginRouting', 'listenToRoutingLoadConfigurationEvent'
     ));
   }
 }

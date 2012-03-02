@@ -1,0 +1,18 @@
+default:
+  http_metas:
+    content-type: text/html; charset=utf-8
+
+  metas:
+    title:         API Documentation
+
+  stylesheets:
+    - /chCmsApiPlugin/css/bootstrap.min.css
+    - /chCmsApiPlugin/css/bootstrap-responsive.min.css
+    - /chCmsApiPlugin/js/google-code-prettify/prettify.css
+
+  javascripts:
+    - /chCmsApiPlugin/js/jquery.js
+    - /chCmsApiPlugin/js/google-code-prettify/prettify.js
+
+  has_layout:     true
+  layout:         layout

@@ -21,7 +21,7 @@ class chCmsApiPluginRouting
    */
   static public function listenToRoutingLoadConfigurationEvent(sfEvent $event)
   {
-    foreach (array(/* list your modules here */) as $module)
+    foreach (array('apiDoc') as $module)
     {
       if (in_array($module, sfConfig::get('sf_enabled_modules')))
       {
@@ -30,5 +30,16 @@ class chCmsApiPluginRouting
     }
   }
 
-  /* define your prependMyModule($routing) methods to register routes */
+
+  public static function prependApiDocRoutes($routing)
+  {
+    $routing->prependRoute(
+      'api_method_doc',
+      new sfRequestRoute(
+        '/api/doc/:route',
+        array('module' => 'apiDoc', 'action' => 'methodDoc'),
+        array('sf_method' => array('GET'))
+      )
+    );
+  }
 }

@@ -1,3 +1,4 @@
 all:
   chCmsApiPlugin:
-    docTemplate:  %sf_root_dir%/plugins/chCmsApiPlugin/data/templates/doc.html.php
+    docLayoutTemplate:  %sf_root_dir%/plugins/chCmsApiPlugin/data/templates/doc.html.php
+    docMethodTemplate:  %sf_root_dir%/plugins/chCmsApiPlugin/modules/apiDoc/templates/methodDocSuccess.php

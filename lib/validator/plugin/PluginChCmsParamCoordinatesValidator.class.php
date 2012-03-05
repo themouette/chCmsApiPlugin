@@ -2,11 +2,11 @@
 /**
  * This file declare the PluginChCmsParamCoordinatesValidator class.
  *
- * @package chCmsApiPlugin
- * @subpackage parma-validator
- * @author Julien Muetton <julien_muetton@carpe-hora.com>
- * @copyright (c) Carpe Hora SARL 2011
- * @since 2011-09-04
+ * @package     chCmsApiPlugin
+ * @subpackage  param-validator
+ * @author      Julien Muetton <julien_muetton@carpe-hora.com>
+ * @copyright   (c) Carpe Hora SARL 2011
+ * @since       2011-09-04
  */
 
 /**
@@ -59,7 +59,6 @@ class PluginChCmsParamCoordinatesValidator extends chCmsValidatorApiBase
         'lat'   => $latIntervalValidator->clean($pattern->clean($value['lat'])),
         'long'  => $longIntervalValidator->clean($pattern->clean($value['long']))
       );
-
     }
     catch (sfValidatorError $e)
     {

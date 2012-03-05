@@ -12,22 +12,6 @@
 /**
  * Class with no description
  */
-class chCmsApiMethodAsPropertyFormatter extends chCmsApiPropertyFormatter
+class chCmsApiMethodAsPropertyFormatter extends PluginChCmsApiMethodAsPropertyFormatter
 {
-  /**
-   * extract property from object
-   *
-   * @return mixed
-   */
-  protected function extractProperty($object)
-  {
-    $field_name = $this->getOption('field_name');
-
-    if (is_callable(array($object, $field_name)))
-    {
-      return $object->$field_name();
-    }
-
-    return parent::extractProperty($object, $field_name);
-  }
 } // END OF chCmsApiMethodAsPropertyFormatter

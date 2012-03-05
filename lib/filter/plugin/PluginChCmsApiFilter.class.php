@@ -2,11 +2,11 @@
 /**
  * This file declare the PluginChCmsApiFilter class.
  *
- * @package chCmsApiPlugin
- * @subpackage filter
- * @author Julien Muetton <julien_muetton@carpe-hora.com>
- * @copyright (c) Carpe Hora SARL 2011
- * @since 2011-07-08
+ * @package     chCmsApiPlugin
+ * @subpackage  filter
+ * @author      Julien Muetton <julien_muetton@carpe-hora.com>
+ * @copyright   (c) Carpe Hora SARL 2011
+ * @since       2011-07-08
  */
 
 /**

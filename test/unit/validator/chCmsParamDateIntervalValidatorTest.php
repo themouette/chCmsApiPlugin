@@ -8,16 +8,16 @@ include dirname(__FILE__) . '/../../bootstrap/unit.php';
 function makeInterval($start, $end)
 {
   return sprintf('%s|%s',
-    date(DateTime::ISO8601, strtotime($start)),
-    date(DateTime::ISO8601, strtotime($end))
+    $start->format(DateTime::ISO8601),
+    $end->format(DateTime::ISO8601)
   );
 }
 
 function makePostValidatorInterval($start, $end)
 {
   return array(
-    'start_date' => date(DateTime::ISO8601, strtotime($start)),
-    'end_date'   => date(DateTime::ISO8601, strtotime($end))
+    'start_date' => $start->format(DateTime::ISO8601),
+    'end_date'   => $end->format(DateTime::ISO8601)
   );
 }
 
@@ -25,16 +25,19 @@ $t = new lime_test(23, new lime_output_color());
 
 $t->diag('test empty value');
 $v = new chCmsParamDateIntervalValidator(array(
-  'required' => false
+  'required'  => false,
+  'default'   => $default = new DateTime('tomorrow')
 ));
-$t->is($v->clean(null), null, 'default value is used');
+$t->is($v->clean(null), $default, 'default value is used');
 
 $t->diag('test valid value');
+$start = new DateTime('now');
+$end = new DateTime('+1 hour');
 $t->is(
-  $v->clean(makeInterval('now', '+1 hour')),
+  $v->clean(makeInterval($start, $end)),
   array(
-    new DateTime('now'),
-    new DateTime('now +1 hour')
+    $start,
+    $end
   ),
   'default value is overriden by valid value'
 );
@@ -57,7 +60,9 @@ $v = new chCmsParamDateIntervalValidator(array(
 ));
 
 $t->diag('test not valid value (interval too small)');
-$interval = makeInterval('now', '+1 hour');
+$start = new DateTime('now');
+$end = new DateTime('+1 hour');
+$interval = makeInterval($start, $end);
 try
 {
   $v->clean($interval);
@@ -71,11 +76,13 @@ catch (sfValidatorError $e)
 }
 
 $t->diag('test valid value');
+$start = new DateTime('now');
+$end = new DateTime('+2 hour');
 $t->is(
-  $v->clean(makeInterval('now', '+2 hour')),
+  $v->clean(makeInterval($start, $end)),
   array(
-    new DateTime('now'),
-    new DateTime('now +2 hour')
+    $start,
+    $end
   ),
   'a large enough interval is valid'
 );
@@ -86,7 +93,9 @@ $v = new chCmsParamDateIntervalValidator(array(
 ));
 
 $t->diag('test not valid value (interval too small)');
-$interval = makeInterval('now', '+3 hour');
+$start = new DateTime('now');
+$end = new DateTime('+3 hour');
+$interval = makeInterval($start, $end);
 try
 {
   $v->clean($interval);
@@ -100,16 +109,20 @@ catch (sfValidatorError $e)
 }
 
 $t->diag('test valid value');
+$start = new DateTime('now');
+$end = new DateTime('+1 hour');
 $t->is(
-  $v->clean(makeInterval('now', '+1 hour')),
+  $v->clean(makeInterval($start, $end)),
   array(
-    new DateTime('now'),
-    new DateTime('now +1 hour')
+    $start,
+    $end
   ),
   'a large enough interval is valid'
 );
 
-$interval = makeInterval('+1 hour', 'now');
+$start = new DateTime('+1 hour');
+$end = new DateTime('now');
+$interval = makeInterval($start, $end);
 try
 {
   $v->clean($interval);
@@ -122,7 +135,9 @@ catch (sfValidatorError $e)
   $t->is($e->getCode(), 'inconsistent', 'exception embed expected code "inconsistent"');
 }
 
-$interval = makeInterval('now -1 day', '+1 hour');
+$start = new DateTime('now -1 day');
+$end = new DateTime('+1 hour');
+$interval = makeInterval($start, $end);
 try
 {
   $v->clean($interval);
@@ -136,19 +151,25 @@ catch (sfValidatorError $e)
 }
 
 $t->diag('test valid value, using the validator as a post-validator');
+$start = new DateTime('now');
+$end = new DateTime('+1 hour');
 $t->is(
-  $v->clean($interval = makePostValidatorInterval('now', '+1 hour')),
+  $v->clean($interval = makePostValidatorInterval($start, $end)),
   array_merge(
     $interval, array(
       'interval' => array(
-        new DateTime($interval['start_date']),
-        new DateTime($interval['end_date'])
+        $start,
+        $end
       )
     )
   ),
   'a large enough interval is valid'
 );
 
+$v = new chCmsParamDateIntervalValidator(array(
+  'required'  => true,
+  'default'   => $default = new DateTime('tomorrow')
+));
 try
 {
   $v->clean(array(

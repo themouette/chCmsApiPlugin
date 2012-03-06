@@ -12,7 +12,7 @@
 /**
  * param validator
  */
-class PluginChCmsParamDateIntervalValidator extends chCmsValidatorApiBase
+class PluginChCmsParamDateIntervalValidator extends chCmsIntegerDefaultParamValidator
 {
   /**
    * configure the widget.
@@ -36,10 +36,10 @@ class PluginChCmsParamDateIntervalValidator extends chCmsValidatorApiBase
     $this->addOption('end_field', 'end_date');
     $this->addOption('interval_field', 'interval');
 
+    parent::configure($options, $messages);
+
     $this->setMessage('invalid', 'Invalid interval "%interval%".');
     $this->addMessage('inconsistent', 'Incorrect interval "%interval%".');
-
-    parent::configure($options, $messages);
   }
 
   protected function getDateValidator()

@@ -1,47 +1,75 @@
-chCmsApiPlugin
-==============
+# chCmsApiPlugin
 
-this plugin allows quick and easy API development.
+This plugin allows *quick* and *easy API development*.
 
-It provides an action class with built in methods for API needs, response 
-and data formatters to ease the object export, parameter parsers to ease data
+It provides an action class with built-in methods for API needs, response
+and data formatters to ease objects export, parameter parsers to ease data
 fetching, validation and mapping.
 
 Generators are provided too, and each of them generates it's own unit test file
 so you can organize your code and focus on what matters.
 
-Installation
-------------
+Oh, and yes, your API will *automatically publish it's own documentation* by
+introspecting your routes, validators and comments!
+
+
+# Installation
+
+## Retrieving the code
+
+Clone the plugin from Github:
+
+    git clone git://github.com/Carpe-Hora/chCmsApiPlugin.git plugins/chCmsApiPlugin
+
+Or even better, add it to your submodules
+
+    git submodule add git://github.com/Carpe-Hora/chCmsApiPlugin.git plugins/chCmsApiPlugin
+
+## Enabling the plugin
 
 to install this plugin, just enable it in your project :
 
-  [php]
-  // config/ProjectConfiguration.class.php
-  //...
-  public function initialize()
-  {
-    $this->eneablePlugins(
-      'sfPropelORMPlugin',
-      'chCmsApiPlugin'
-    );
-  }
-  //...
+```php
+<?php
+// config/ProjectConfiguration.class.php
+//...
+public function initialize()
+{
+  $this->eneablePlugins(
+    // ...
+    'chCmsApiPlugin',
+    // ...
+  );
+}
+//...
+```
 
-And add the filter to your application
+And add the filters to your application:
 
-  [yml]
-  # app/api/config/filters.yml
+```yml
+# app/api/config/filters.yml
 
-  all:
-    #...
-    chCmsApiPlugin:                   # filter for API
-      class: chCmsApiFilter           # handle errors and set content type
-    #...
+all:
+  # ...
+  Api:
+    class: chCmsApiFilter
+
+  # ...
+
+  security:  ~
+
+  ApiParams:
+    class: chCmsApiValidateParamFilter
+
+  # ...
+```
 
 You're done.
 
-Create an API function
-----------------------
+
+# Use
+
+## Create an API function
 
 ### register routing
 
@@ -51,27 +79,37 @@ Create a new route as usual (use improved [TaskExtraPlugin](https://github.com/C
   // plugins/myApiPlugin/lib/routing/myApiPluginRouting.class.php
   public static function registerMyApiRoutes($routing)
   {
-    $routing->prependRoute(
-      'my_first_api_route',
+    $routing->prependRoute('my_first_api_route',
       new sfRequestRoute(
         '/api/my/function/:required.sf_format',
         // default values
-        array('module' => 'myApiModule', 'action' => 'myApiAction',
-            'sf_method' => chCmsApiTools::getDefaultFormat()),
+        array(
+          'module'    => 'myApiModule',
+          'action'    => 'myApiAction',
+          'sf_method' => chCmsApiTools::getDefaultFormat()
+        ),
         // requirements
         array(
-            'required' => "\w+",
-            'sf_method' => chCmsApiTools::getFormatRequirementForRoute(array(
-                'my_extra_format'), 'sf_method' => array('POST', 'PUT'))),
+          'required' => "\w+",
+          'sf_method' => chCmsApiTools::getFormatRequirementForRoute(array(
+              'my_extra_format'
+            )),
+          'sf_method' => array('POST', 'PUT')
+        ),
         // options
-        array('param_validator' => new myApiParamValidator(array(
-                'option_name' => 'option_value')))
+        array(
+          'comment'         => 'A really cool API method.',
+          //'public_api'      => false, // uncomment id to hide if from the methods list
+          'param_validator' => new myApiParamValidator(array(
+            'option_name' => 'option_value'
+          ))
+        )
       )
     );
   }
 
-You noticed the weird param_validator option ?
-It means that request parameters will go through this param validator 
+Noticed the weird param_validator option ?
+It means that request parameters will go through this param validator
 cleaning process.
 
 Param validators is a simple way to translate, preprocess and validate
@@ -154,7 +192,7 @@ Note:   to extend a sfResponse use the "response.method_not_found" event.
 A *Data Formatter* translates anything into a format that can be used by the
 *Response Formatter*.
 
-Eventhough you can define formatters on the fly, it is a good practice to 
+Eventhough you can define formatters on the fly, it is a good practice to
 generate a formatter to use it.
 
 > ./symfony chCms:generate-formatter --plugin=myApiPlugin myApi
@@ -228,7 +266,6 @@ extend from chCmsApiActions
 
 use the $this->renderApi($formatted_result);
 
-Generators
-----------
+## Generators
 
 there is a validator class generator.

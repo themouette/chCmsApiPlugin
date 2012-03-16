@@ -12,7 +12,7 @@
 /**
  * Class used extract documentation information from a param validator.
  */
-class PluginChParamValidatorDocumentationExtractor implements chExtractorInterface
+class PluginChParamValidatorDocumentationExtractor extends AbstractDocumentationExtractor
 {
   public function extract($paramValidator, $options = array())
   {
@@ -59,17 +59,6 @@ class PluginChParamValidatorDocumentationExtractor implements chExtractorInterfa
     return !is_object($var);
   }
 
-  protected function getDescription($paramValidator)
-  {
-    $object = $this->createValidatorObject($paramValidator);
-    if ($description = $object->getOption('comment'))
-    {
-      return $description;
-    }
-
-    return $this->getDescriptionFromClass($paramValidator);
-  }
-
   protected function createValidatorObject($paramValidator)
   {
     if (is_object($paramValidator))
@@ -79,22 +68,5 @@ class PluginChParamValidatorDocumentationExtractor implements chExtractorInterfa
 
     // class name
     return new $paramValidator;
-  }
-
-  protected function getDescriptionFromClass($class, $try_parent = true)
-  {
-    $rClass = $class instanceof ReflectionClass ? $class : new ReflectionClass($class);
-
-    if ($try_parent)
-    {
-      return $this->getDescriptionFromClass($rClass->getParentClass(), false);
-    }
-
-    $raw_description = $rClass->getDocComment();
-
-    $description = trim(str_replace(array('/**', '/*', '*/'), '', $raw_description));
-    $description = preg_replace('#^[ ]*\*[ ]*#', '', $description);
-
-    return $description;
   }
 }

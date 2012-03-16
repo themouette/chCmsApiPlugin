@@ -11,6 +11,13 @@
   <div class="navbar-inner">
     <div class="container">
       <span class="brand">API Doc</span>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li><a href="<?php echo url_for('@apiMethods') ?>">Methods</a></li>
+          <li><a href="<?php echo url_for('@apiFormatters') ?>">Formatters</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

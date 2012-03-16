@@ -36,8 +36,17 @@ class chCmsApiPluginRouting
     $routing->prependRoute(
       'api_method_doc',
       new sfRequestRoute(
-        '/api/doc/:route',
+        '/api/doc/method/:route',
         array('module' => 'apiDoc', 'action' => 'methodDoc'),
+        array('sf_method' => array('GET'))
+      )
+    );
+
+    $routing->prependRoute(
+      'api_formatter_doc',
+      new sfRequestRoute(
+        '/api/doc/formatter/:formatter',
+        array('module' => 'apiDoc', 'action' => 'formatterDoc'),
         array('sf_method' => array('GET'))
       )
     );

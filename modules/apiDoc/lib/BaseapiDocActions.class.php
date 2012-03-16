@@ -28,6 +28,16 @@ abstract class BaseapiDocActions extends sfActions
   }
 
   /**
+   * Executes listFormatters action
+   *
+   * @param sfRequest $request A request object
+   */
+  public function executeListFormatters(sfWebRequest $request)
+  {
+    $this->formatters = $this->extractApiFormatters();
+  }
+
+  /**
    * Executes listRoutes action
    *
    * @param sfRequest $request A request object
@@ -57,10 +67,28 @@ abstract class BaseapiDocActions extends sfActions
 
     // expose the extracted data to the template
     sfConfig::set('sf_escaping_strategy', false);
-    foreach ($data as $key => $value)
-    {
-      $this->{$key} = $value;
-    }
+    $this->expose($data);
+  }
+
+  /**
+   * Executes listRoutes action
+   *
+   * @param sfRequest $request A request object
+   */
+  public function executeFormatterDoc(sfWebRequest $request)
+  {
+    $this->formatter = $request->getParameter('formatter');
+    $this->forward404Unless(class_exists($this->formatter));
+    $this->forward404Unless($this->isFormatterValid($this->formatter));
+
+    // extract the data
+    $extractor = new chDocumentationExtractor();
+    $extractor->registerExtractor('formatter', new chFormatterDocumentationExtractor());
+    $data = $extractor->extract($this->formatter);
+
+    // expose the extracted data to the template
+    sfConfig::set('sf_escaping_strategy', false);
+    $this->expose($data);
   }
 
 
@@ -104,5 +132,69 @@ abstract class BaseapiDocActions extends sfActions
   {
     $options = $route->getOptions();
     return !(array_key_exists('public_api', $options) && !$options['public_api']);
+  }
+
+  protected function extractApiFormatters()
+  {
+    $formatters = array();
+
+    $classes = sfFinder::type('file')
+      ->name('*Formatter{,.class}.php')
+      ->in(sfConfig::get('sf_root_dir'));
+    foreach ($classes as $file)
+    {
+      $class = explode(DIRECTORY_SEPARATOR, $file);
+      $class = explode('.', $class[count($class) - 1]);
+      $class = $class[0];
+
+      if (!$this->isFormatterValid($class))
+      {
+        continue;
+      }
+
+      $formatters[$class] = array();
+    }
+
+    ksort($formatters, SORT_LOCALE_STRING);
+
+    return $formatters;
+  }
+
+  protected function isFormatterValid($formatter)
+  {
+    // skip Plugin* classes
+    if (substr($formatter, 0, 6) === 'Plugin')
+    {
+      return false;
+    }
+
+    try
+    {
+      $rClass = new ReflectionClass($formatter);
+      // a formatter must inherit from BasechCmsApiFormatter
+      if ($rClass->isAbstract() || !$rClass->isSubclassOf('BasechCmsApiFormatter'))
+      {
+        return false;
+      }
+    }
+    catch (ReflectionException $e)
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Expose the given array in the view
+   *
+   * @author Kevin Gomez <kevin_gomez@carpe-hora.com>
+   */
+  protected function expose(array $data)
+  {
+    foreach ($data as $key => $value)
+    {
+      $this->{$key} = $value;
+    }
   }
 }

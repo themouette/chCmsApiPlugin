@@ -1,8 +1,6 @@
 <?php
 $pluginDir = dirname(dirname(dirname(dirname(__FILE__))));
 require $pluginDir . '/test/bootstrap/unit.php';
-require $pluginDir . '/../chCmsBasePlugin/lib/pluginchCmsActions.class.php';
-require $pluginDir . '/../../lib/chCmsActions.class.php';
 
 $t = new lime_test(10, new lime_output_color());
 

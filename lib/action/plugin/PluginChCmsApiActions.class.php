@@ -12,7 +12,7 @@
 /**
  * base action class for API actions
  */
-abstract class PluginChCmsApiActions extends chCmsActions
+abstract class PluginChCmsApiActions extends sfActions
 {
   /**
    * return the default error code if none provided

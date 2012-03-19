@@ -75,38 +75,40 @@ You're done.
 
 Create a new route as usual (use improved [TaskExtraPlugin](https://github.com/Carpe-Hora/sfTaskExtraPlugin) to generate plugin)
 
-  [php]
-  // plugins/myApiPlugin/lib/routing/myApiPluginRouting.class.php
-  public static function registerMyApiRoutes($routing)
-  {
-    $routing->prependRoute('my_first_api_route',
-      new sfRequestRoute(
-        '/api/my/function/:required.sf_format',
-        // default values
-        array(
-          'module'    => 'myApiModule',
-          'action'    => 'myApiAction',
-          'sf_method' => chCmsApiTools::getDefaultFormat()
-        ),
-        // requirements
-        array(
-          'required' => "\w+",
-          'sf_method' => chCmsApiTools::getFormatRequirementForRoute(array(
-              'my_extra_format'
-            )),
-          'sf_method' => array('POST', 'PUT')
-        ),
-        // options
-        array(
-          'comment'         => 'A really cool API method.',
-          //'public_api'      => false, // uncomment id to hide if from the methods list
-          'param_validator' => new myApiParamValidator(array(
-            'option_name' => 'option_value'
-          ))
-        )
+```php
+<?php
+// plugins/myApiPlugin/lib/routing/myApiPluginRouting.class.php
+public static function registerMyApiRoutes($routing)
+{
+  $routing->prependRoute('my_first_api_route',
+    new sfRequestRoute(
+      '/api/my/function/:required.sf_format',
+      // default values
+      array(
+        'module'    => 'myApiModule',
+        'action'    => 'myApiAction',
+        'sf_method' => chCmsApiTools::getDefaultFormat()
+      ),
+      // requirements
+      array(
+        'required' => "\w+",
+        'sf_method' => chCmsApiTools::getFormatRequirementForRoute(array(
+            'my_extra_format'
+          )),
+        'sf_method' => array('POST', 'PUT')
+      ),
+      // options
+      array(
+        'comment'         => 'A really cool API method.',
+        //'public_api'      => false, // uncomment id to hide if from the methods list
+        'param_validator' => new myApiParamValidator(array(
+          'option_name' => 'option_value'
+        ))
       )
-    );
-  }
+    )
+  );
+}
+```
 
 Noticed the weird param_validator option ?
 It means that request parameters will go through this param validator
@@ -136,32 +138,37 @@ Note:   in plugin context a Plugin class is generated too.
 
 You configure it in the setup method, just as forms.
 
-  [php]
-  // plugins/myApiPlugin/lib/param/plugin/PluginMyApiParamValidator.class.php
-  public function setup()
+```php
+<?php
+// plugins/myApiPlugin/lib/param/plugin/PluginMyApiParamValidator.class.php
+public function setup()
+{
+  // to validate a page number
+  $this->setValidator('page',
+    new chCmsPageParamValidator(array(
+      'max' => $this->getOption('max_page', null)
+    ))
+  );
+
+  // you can access user directly
+  if (!$this->getUser()->isAuthenticated())
   {
-    // to validate a page number
-    $this->setValidator('page',
-      new chCmsPageParamValidator(array(
-          'max' => $this->getOption('max_page', null))));
-
-    // you can access user directly
-    if (!$this->getUser()->isAuthenticated())
-    {
-      $this->setValidator('email', new sfValidatorEmail());
-    }
-    else
-    {
-      $this->setDefault('email', $this->getUser()->getEmail());
-    }
-
-    // and even post validate
-    $this->mergePostValidator(new sfValidatorCallback(array(
-      'callback' => array($this, 'myRequestParameterFilterMethod'))));
-    // this required you to implement myRequestParameterFilterMethod
-    // with prototype :
-    // public function myRequestParameterFilterMethod($validator, $value, $args)
+    $this->setValidator('email', new sfValidatorEmail());
   }
+  else
+  {
+    $this->setDefault('email', $this->getUser()->getEmail());
+  }
+
+  // and even post validate
+  $this->mergePostValidator(new sfValidatorCallback(array(
+    'callback' => array($this, 'myRequestParameterFilterMethod')
+  )));
+  // this required you to implement myRequestParameterFilterMethod
+  // with prototype :
+  // public function myRequestParameterFilterMethod($validator, $value, $args)
+  }
+```
 
 Now, when @my_first_api_route will be requested, thanks to the *chCmsApiFilter*,
 parameters will go through *myApiParamValidator* and directly set into the
@@ -202,27 +209,29 @@ file.
 
 To specialize the formatter, specialize the initialize method:
 
-  [php]
-  // plugins/myApiPlugin/lib/formatter/plugin/PluginMyApiFormatter.class.php
-  public function initialize()
-  {
-    $this->setDefaultFormatFields(array(
+```php
+<?php
+// plugins/myApiPlugin/lib/formatter/plugin/PluginMyApiFormatter.class.php
+public function initialize()
+{
+  $this->setDefaultFormatFields(array(
+    // put the slug (using getSlug) property into api_id
+    'api_id'      => new chCmsApiPropertyFormatter('slug'),
 
-      // put the slug (using getSlug) property into api_id
-      'api_id'      => new chCmsApiPropertyFormatter('slug'),
+    // set collection property with getSubobj collection formatted
+    // with myCustomFormatter
+    'collection'  => new chCmsApiCollectionPropertyFormatter('subobj',
+      new myCustomFormatter()
+    ),
 
-      // set collection property with getSubobj collection formatted
-      // with myCustomFormatter
-      'collection'  => new chCmsApiCollectionPropertyFormatter('subobj',
-                              new myCustomFormatter())
+    // call *getBar* to initialize foo property
+    'foo'         => 'bar',
 
-      // call *getBar* to initialize foo property
-      'foo'         => 'bar',
-
-      // simply translate baz to the result object
-      'baz'
-    ));
-  }
+    // simply translate baz to the result object
+    'baz'
+  ));
+}
+```
 
 A bunch of formatters is bundeled with the plugin, such as:
 
@@ -241,22 +250,25 @@ for objects, you can also call
 
 Here is some sample code
 
-  [php]
-  $myApiObject = myApiOjectQuery::create()->findOneById(10);
-  $f = new myApiFormatter();
-  $f->format($myApiObject);
+```php
+<?php
+$myApiObject = myApiOjectQuery::create()->findOneById(10);
+$f = new myApiFormatter();
+$f->format($myApiObject);
 
-  // add extra fields
-  $f = new myApiFormatter();
-  $f->format($myApiObject, array(
-            'my_extra_field')); // include my_extra_field property
-  $f->format($myApiObject);     // no more include my_extra_field property
-  $f->mergeFormatFields(array('my_extra_field'));
-  $f->format($myApiObject);     // include my_extra_field property
+// add extra fields
+$f = new myApiFormatter();
+$f->format($myApiObject, array(
+  'my_extra_field' // include my_extra_field property
+));
+$f->format($myApiObject);     // no more include my_extra_field property
+$f->mergeFormatFields(array('my_extra_field'));
+$f->format($myApiObject);     // include my_extra_field property
 
-  // force properties
-  $f = new myApiFormatter(array('my_extra_field'));
-  $f->format($myApiObject);   // only include my_extra_field property
+// force properties
+$f = new myApiFormatter(array('my_extra_field'));
+$f->format($myApiObject);   // only include my_extra_field property
+```
 
 let's see how to put it all together.
 

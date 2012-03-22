@@ -75,6 +75,7 @@ You're done.
 
 Create a new route as usual (use improved [TaskExtraPlugin](https://github.com/Carpe-Hora/sfTaskExtraPlugin) to generate plugin)
 
+<<<<<<< HEAD
 ```php
 <?php
 // plugins/myApiPlugin/lib/routing/myApiPluginRouting.class.php
@@ -100,11 +101,11 @@ public static function registerMyApiRoutes($routing)
       // options
       array(
         'comment'         => 'A really cool API method.',
-        //'public_api'      => false, // uncomment id to hide if from the methods list
-        'param_validator' => new myApiParamValidator(array(
-          'option_name' => 'option_value'
-        ))
-      )
+        //'public_api'    => false, // uncomment id to hide if from the methods list
+        'param_validator' => 'myApiParamValidator',
+        'param_validator_args' => array(
+        'option_name' => 'option_value'
+      ))
     )
   );
 }

@@ -15,7 +15,7 @@
       <div class="nav-collapse">
         <ul class="nav">
           <li><a href="<?php echo url_for('@apiMethods') ?>">Methods</a></li>
-          <li><a href="<?php echo url_for('@apiFormatters') ?>">Formatters</a></li>
+          <li><a href="<?php echo url_for('@apiFormatters') ?>">Object Types</a></li>
         </ul>
       </div>
     </div>

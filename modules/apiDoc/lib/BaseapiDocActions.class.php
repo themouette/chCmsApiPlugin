@@ -38,7 +38,7 @@ abstract class BaseapiDocActions extends sfActions
   }
 
   /**
-   * Executes listRoutes action
+   * Executes methodDoc action
    *
    * @param sfRequest $request A request object
    */
@@ -71,7 +71,7 @@ abstract class BaseapiDocActions extends sfActions
   }
 
   /**
-   * Executes listRoutes action
+   * Executes formatterDoc action
    *
    * @param sfRequest $request A request object
    */
@@ -89,6 +89,17 @@ abstract class BaseapiDocActions extends sfActions
     // expose the extracted data to the template
     sfConfig::set('sf_escaping_strategy', false);
     $this->expose($data);
+  }
+
+
+  /**
+   * Executes sandbox action
+   *
+   * @param sfRequest $request A request object
+   */
+  public function executeSandbox(sfWebRequest $request)
+  {
+    $this->routes = $this->extractApiRoutes();
   }
 
 

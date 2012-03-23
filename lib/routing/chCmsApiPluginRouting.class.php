@@ -50,5 +50,14 @@ class chCmsApiPluginRouting
         array('sf_method' => array('GET'))
       )
     );
+
+    $routing->prependRoute(
+      'api_sandbox',
+      new sfRequestRoute(
+        '/api/doc/sandbox',
+        array('module' => 'apiDoc', 'action' => 'sandbox'),
+        array('sf_method' => array('GET'))
+      )
+    );
   }
 }

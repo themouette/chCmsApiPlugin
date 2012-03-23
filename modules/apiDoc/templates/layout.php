@@ -16,6 +16,7 @@
         <ul class="nav">
           <li><a href="<?php echo url_for('@apiMethods') ?>">Methods</a></li>
           <li><a href="<?php echo url_for('@apiFormatters') ?>">Object Types</a></li>
+          <li><a href="<?php echo url_for('@api_sandbox') ?>">Sandbox</a></li>
         </ul>
       </div>
     </div>

@@ -11,11 +11,11 @@ class chCmsApiDateTimePropertyFormatterTest extends ApiFormatterTester
     $this->assert_format_ok($formatter, new DateTime('2010-01-01 10:24:16-04:00'),
                                                      '2010-01-01T10:24:16-0400',
                                         "Timezone is preserved.");
-    $this->assert_format_ok($formatter, new DateTime('2011-11-31 00:00:00', new DateTimeZone('UTC')),
-                                                     '2011-12-01T00:00:00+0000',
+    $this->assert_format_ok($formatter, new DateTime('2011-11-30 00:00:00', new DateTimeZone('UTC')),
+                                                     '2011-11-30T00:00:00+0000',
                                         "Timezone can be forced in date");
-    $this->assert_format_ok($formatter, new DateTime('2011-11-31 00:00:00'),
-                                                     '2011-12-01T00:00:00'.date('O'),
+    $this->assert_format_ok($formatter, new DateTime('2011-11-30 00:00:00'),
+                                                     '2011-11-30T00:00:00'.date('O', strtotime('2011-11-30 00:00:00')),
                                         "Default timezone is server's.");
   }
 

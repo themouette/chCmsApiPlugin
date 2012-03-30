@@ -15,6 +15,21 @@
 class PluginChCmsApiErrorException extends sfException
 {
   /**
+   * extra parameters bound to the exception (will be returned)
+   * @access protected
+   * @var array
+   */
+   protected $parameters;
+
+  /**
+   * the exception error code
+   * @access protected
+   * @var mixed
+   */
+  protected $api_code;
+
+
+  /**
    * exception constructor
    *
    * @param mixed   $code     the error code
@@ -37,20 +52,6 @@ class PluginChCmsApiErrorException extends sfException
   }
 
   /**
-   * extra parameters bound to the exception (will be returned)
-   * @access protected
-   * @var array
-   */
-   protected $parameters;
-
-  /**
-   * the exception error code
-   * @access protected
-   * @var mixed
-   */
-  protected $api_code;
-
-  /**
    * getter for api_code
    * @access public
    *
@@ -71,7 +72,6 @@ class PluginChCmsApiErrorException extends sfException
   {
     return $this->api_code = $error_code;
   }
-
 
   /**
    * getter for parameters

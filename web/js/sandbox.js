@@ -17,7 +17,6 @@
     try {
       var data = typeof text === 'string' ? JSON.parse(text) : text;
       text = JSON.stringify(data, undefined, ' ');
-      console.log('ok');
     } catch (err) { }
 
     return text;
@@ -56,7 +55,6 @@
 
     var params = {};
     $('.param_tuple').each(function() {
-      console.log($(this));
       var key, value;
 
       key = $('.key', $(this)).val();
@@ -110,6 +108,9 @@
     $('#route').change(function() {
       updateUrlField($(this).val());
     });
+    if ($('#route').val()) {
+      $('#route').change();
+    }
 
     // execute the request!
     $('#send').click(executeRequest);

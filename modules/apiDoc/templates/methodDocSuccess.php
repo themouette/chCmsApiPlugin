@@ -18,6 +18,12 @@
 
 <pre><?php echo implode('|', $HTTP_METHODS) ?> <?php echo $FORMAL_URL ?></pre>
 
+<p>
+  <?php echo link_to('Test in the sandbox', '@api_sandbox?route='.$route_name, array(
+    'class' => 'btn'
+  )); ?>
+</p>
+
 
 <h2 id="formats">Supported formats</h2>
 

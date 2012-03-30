@@ -15,7 +15,7 @@
           <select name="route" id="route">
             <option value="">-----</option>
             <?php foreach ($routes as $id => $route): ?>
-              <option value="<?php echo $id ?>"><?php echo $id ?></option>
+              <option value="<?php echo $id ?>"<?php echo $id === $test_route ? ' selected' : '' ?>><?php echo $id ?></option>
             <?php endforeach; ?>
           </select><input type="text" class="input-xlarge" id="url" name="url" placeholder="Query URL" /><select name="method" id="method" class="span1">
             <?php foreach (array('GET', 'HEAD', 'POST', 'PUT', 'DELETE') as $method): ?>

@@ -100,6 +100,7 @@ abstract class BaseapiDocActions extends sfActions
   public function executeSandbox(sfWebRequest $request)
   {
     $this->routes = $this->extractApiRoutes();
+    $this->test_route = $request->getParameter('route', '');
   }
 
 

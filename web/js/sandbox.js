@@ -114,6 +114,10 @@
 
     // execute the request!
     $('#send').click(executeRequest);
+    $('#sandbox-form').submit(function() {
+      executeRequest();
+      return false;
+    });
 
     // add a parameter
     add_param_btn.click(function() {

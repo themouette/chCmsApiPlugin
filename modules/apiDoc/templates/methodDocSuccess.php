@@ -3,13 +3,10 @@
 <?php endif; ?>
 
 <p class="well">
-  <?php if (!empty($ROUTE_DESCRIPTION)): ?>
-    <?php echo nl2br($ROUTE_DESCRIPTION) ?>
-    <br>
-  <?php endif; ?>
   <?php if (!empty($DESCRIPTION)): ?>
     <?php echo nl2br($DESCRIPTION) ?>
-    <br>
+  <?php elseif (!empty($ROUTE_DESCRIPTION)): ?>
+    <?php echo nl2br($ROUTE_DESCRIPTION) ?>
   <?php endif; ?>
 </p>
 

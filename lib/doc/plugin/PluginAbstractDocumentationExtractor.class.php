@@ -36,7 +36,7 @@ abstract class PluginAbstractDocumentationExtractor implements chExtractorInterf
     $raw_description = $rClass->getDocComment();
 
     $description = trim(str_replace(array('/**', '/*', '*/'), '', $raw_description));
-    $description = preg_replace('#^[ ]*\*[ ]*#', '', $description);
+    $description = preg_replace('#^[ ]*\*[ ]*#m', '', $description);
 
     return $description;
   }

@@ -91,7 +91,6 @@ abstract class BaseapiDocActions extends sfActions
     $this->expose($data);
   }
 
-
   /**
    * Executes sandbox action
    *
@@ -172,6 +171,14 @@ abstract class BaseapiDocActions extends sfActions
     return $formatters;
   }
 
+  /**
+   * Tells if a given formatter is valid (ie: can be displayed in the doc).
+   *
+   * @param string $formatter The formatter name.
+   *
+   * @return bool
+   * @author Kevin Gomez <kevin_gomez@carpe-hora.com>
+   */
   protected function isFormatterValid($formatter)
   {
     // skip Plugin* classes

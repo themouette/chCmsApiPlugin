@@ -12,7 +12,15 @@
   <tbody>
     <?php foreach ($apiMethods->getRawValue() as $id => $data): ?>
     <tr>
-      <td><?php echo link_to($id, 'api_method_doc', array('route' => $id)) ?></td>
+      <td>
+        <?php
+        echo link_to($id, 'api_method_doc', array(
+          'route' => $id
+        ), array(
+          'title' => sprintf('See the documentation for the "%s" API method.', $id)
+        ));
+        ?>
+      </td>
 
       <td>
         <?php

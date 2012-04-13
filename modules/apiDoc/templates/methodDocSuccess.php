@@ -14,15 +14,9 @@
 </p>
 
 
-<h2 id="url">URL</h2>
+<h2 id="formal_url">URL</h2>
 
 <pre><?php echo implode('|', $HTTP_METHODS) ?> <?php echo $FORMAL_URL ?></pre>
-
-<p>
-  <?php echo link_to('Test in the sandbox', '@api_sandbox?route='.$route_name, array(
-    'class' => 'btn'
-  )); ?>
-</p>
 
 
 <h2 id="formats">Supported formats</h2>
@@ -51,7 +45,11 @@
   </thead>
 
   <tbody>
+    <?php $required_params = array(); ?>
     <?php foreach ($PARAMS as $name => $data): ?>
+
+    <?php $required_params[$name] = !empty($data['default']) ? $data['default'] : '' ?>
+
     <tr>
       <td>
         <!-- required -->
@@ -97,11 +95,27 @@
       </td>
     </tr>
     <?php endforeach; ?>
+
+    <?php if (empty($PARAMS)): ?>
+    <tr>
+      <td colspan="2">No parameters.</td>
+    </tr>
+    <?php endif; ?>
   </tbody>
 </table>
+
 
 <?php if (!empty($RESULT)): ?>
   <h2 id="results">Result</h2>
 
   <pre class="prettyprint linenums"><?php echo $RESULT ?></pre>
+<?php else: ?>
+  <h2>Sandbox</h2>
+  <?php
+  include_partial('apiDoc/sandbox_form', array(
+    'test_url'            => str_replace(':sf_format', 'json', $FORMAL_URL),
+    'default_method'      => $HTTP_METHODS[0],
+    'default_parameters'  => $required_params
+  ));
+  ?>
 <?php endif; ?>

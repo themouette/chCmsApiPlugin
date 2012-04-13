@@ -1,6 +1,6 @@
 !function($, undefined) {
   var url_field, method_field, results_container, http_code_container,
-      add_param_btn;
+      add_param_btn, send_btn;
 
   var updateUrlField = function(route_id) {
     if (!Routes || !Routes[route_id]) {
@@ -69,6 +69,11 @@
       url: request_url,
       type: request_method,
       data: params,
+      dataType: 'json',
+      beforeSend: function() {
+        send_btn.prepend($('<i>', {'class': 'icon-refresh'}));
+        send_btn.attr('disabled', true);
+      },
       error: function(xhr) {
         results_container.html(prettifyJSONResponse(xhr.responseText));
         updateHTTPCodeInfo(xhr.status, xhr.statusText);
@@ -76,6 +81,10 @@
       success: function(data) {
         results_container.html(prettifyJSONResponse(data));
         updateHTTPCodeInfo(200, 'OK');
+      },
+      complete: function() {
+        send_btn.find('i').remove();
+        send_btn.attr('disabled', false);
       }
     });
 
@@ -103,6 +112,7 @@
     results_container = $('#results');
     http_code_container = $('#http_code');
     add_param_btn = $('#new_param_btn');
+    send_btn = $('#send');
 
     // prefill the url field when the selected api method changes
     $('#route').change(function() {
@@ -113,7 +123,7 @@
     }
 
     // execute the request!
-    $('#send').click(executeRequest);
+    send_btn.click(executeRequest);
     $('#sandbox-form').submit(function() {
       executeRequest();
       return false;

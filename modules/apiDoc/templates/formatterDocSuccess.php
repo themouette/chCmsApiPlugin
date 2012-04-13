@@ -1,9 +1,9 @@
 <h2>« <?php echo $formatter ?> » documentation</h2>
 
 <?php if (!empty($DESCRIPTION)): ?>
-<p class="well">
-  <?php echo nl2br($DESCRIPTION) ?>
-</p>
+<div class="well">
+  <?php echo $DESCRIPTION ?>
+</div>
 <?php endif; ?>
 
 <h3 id="fields">Fields</h3>

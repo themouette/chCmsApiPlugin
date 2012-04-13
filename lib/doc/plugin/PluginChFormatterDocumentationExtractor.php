@@ -16,15 +16,20 @@ class PluginChFormatterDocumentationExtractor extends AbstractDocumentationExtra
 {
   public function extract($formatter, $options = array())
   {
+    $data = array(
+      'FIELDS'      => array(),
+      'DESCRIPTION' => ''
+    );
+
     if (!$formatter)
     {
-      return array();
+      return $data;
     }
 
     $formatter = $this->createFormatterObject($formatter);
     if (!$formatter instanceof BasechCmsApiFormatter)
     {
-      return array();
+      return $data;
     }
 
     return array(

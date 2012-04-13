@@ -60,10 +60,17 @@ abstract class BaseapiDocActions extends sfActions
     $extractor->registerExtractor('param_validator', new chParamValidatorDocumentationExtractor());
     $extractor->registerExtractor('route', new chRouteDocumentationExtractor());
 
-    $data = array_merge(
-      $extractor->extract($options['param_validator']),
-      $extractor->extract($this->route)
-    );
+    try
+    {
+      $data = array_merge(
+        $extractor->extract($options['param_validator']),
+        $extractor->extract($this->route)
+      );
+    }
+    catch (Exception $e)
+    {
+      $this->forward404('Impossible to generate the documentation for the "'.$this->route.'" method.');
+    }
 
     // expose the extracted data to the template
     sfConfig::set('sf_escaping_strategy', false);
@@ -84,7 +91,14 @@ abstract class BaseapiDocActions extends sfActions
     // extract the data
     $extractor = new chDocumentationExtractor();
     $extractor->registerExtractor('formatter', new chFormatterDocumentationExtractor());
-    $data = $extractor->extract($this->formatter);
+    try
+    {
+      $data = $extractor->extract($this->formatter);
+    }
+    catch (Exception $e)
+    {
+      $this->forward404('Impossible to generate the documentation for the "'.$this->formatter.'" formatter.');
+    }
 
     // expose the extracted data to the template
     sfConfig::set('sf_escaping_strategy', false);

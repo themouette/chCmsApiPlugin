@@ -30,7 +30,7 @@ class PluginChDocumentationExtractor implements chExtractorInterface
   public function extractFromRequest(sfRequest $request, $options = array())
   {
     $route = $request->getAttribute('sf_route');
-    $paramValidator = $request->getParamValidator();    
+    $paramValidator = $request->getParamValidator();
     $context_data = $request->getRequestContext();
 
     return array_merge(

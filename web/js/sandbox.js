@@ -17,7 +17,9 @@
     try {
       var data = typeof text === 'string' ? JSON.parse(text) : text;
       text = JSON.stringify(data, undefined, ' ');
-    } catch (err) { }
+    } catch (err) {
+      text = $('<div>').text(text).html();
+    }
 
     return text;
   };
@@ -69,7 +71,6 @@
       url: request_url,
       type: request_method,
       data: params,
-      dataType: 'json',
       beforeSend: function() {
         send_btn.prepend($('<i>', {'class': 'icon-refresh'}));
         send_btn.attr('disabled', true);

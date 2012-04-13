@@ -2,13 +2,13 @@
   <h2>« <?php echo $route_name ?> » documentation</h2>
 <?php endif; ?>
 
-<p class="well">
+<div class="well">
   <?php if (!empty($DESCRIPTION)): ?>
-    <?php echo nl2br($DESCRIPTION) ?>
+    <?php echo $DESCRIPTION ?>
   <?php elseif (!empty($ROUTE_DESCRIPTION)): ?>
-    <?php echo nl2br($ROUTE_DESCRIPTION) ?>
+    <?php echo $ROUTE_DESCRIPTION ?>
   <?php endif; ?>
-</p>
+</div>
 
 
 <h2 id="formal_url">URL</h2>

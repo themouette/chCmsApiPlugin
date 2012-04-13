@@ -14,14 +14,27 @@
  */
 abstract class PluginAbstractDocumentationExtractor implements chExtractorInterface
 {
+  protected $options = array();
+
+
+  public function __construct($options = array())
+  {
+    $this->options = $options;
+  }
+
   protected function getDescription($object, $try_class = true)
   {
     if ($description = $object->getOption('comment'))
     {
-      return $description;
+      return $this->parseDescription($description);
     }
 
-    return $try_class ? $this->getDescriptionFromClass($object) : '';
+    if (!$try_class)
+    {
+      return '';
+    }
+
+    return $this->parseDescription($this->getDescriptionFromClass($object));
   }
 
   protected function getDescriptionFromClass($class, $try_parent = true)
@@ -39,5 +52,20 @@ abstract class PluginAbstractDocumentationExtractor implements chExtractorInterf
     $description = preg_replace('#^[ ]*\*[ ]*#m', '', $description);
 
     return $description;
+  }
+
+  protected function parseDescription($description)
+  {
+    return $this->getDescriptionParser()->transform($description);
+  }
+
+  protected function getDescriptionParser()
+  {
+    if (isset($this->options['description_parser']))
+    {
+      return $this->options['description_parser'];
+    }
+
+    return $this->options['description_parser'] = new Markdown_Parser();
   }
 }

@@ -33,18 +33,6 @@
   <fieldset>
     <legend>Request Parameters</legend>
 
-    <!--<div class="control-group">
-      <label class="control-label">Parameters</label>
-
-      <div class="controls">
-        <p id="parameters-message" class="alert alert-info">
-          Choose an API Method and its required parameters will automatically be
-          inserted here.
-        </p>
-
-      </div>
-    </div>-->
-
     <div class="control-group">
       <label class="control-label">Parameters</label>
 

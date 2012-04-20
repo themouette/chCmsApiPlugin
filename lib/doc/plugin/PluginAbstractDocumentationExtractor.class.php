@@ -46,12 +46,27 @@ abstract class PluginAbstractDocumentationExtractor implements chExtractorInterf
       return $this->getDescriptionFromClass($rClass->getParentClass(), false);
     }
 
-    $raw_description = $rClass->getDocComment();
+    return $this->cleanDocBlock($rClass->getDocComment());
+  }
 
-    $description = trim(str_replace(array('/**', '/*', '*/'), '', $raw_description));
-    $description = preg_replace('#^[ ]*\*[ ]*#m', '', $description);
+  protected function getDescriptionFromMethod($class, $method)
+  {
+    $rClass = new ReflectionClass($class);
+    return $this->cleanDocBlock($rClass->getMethod($method)->getDocComment());
+  }
 
-    return $description;
+  /**
+   * Clean a documentation block to only return its text.
+   *
+   * @param string $docBlock The raw doc block.
+   *
+   * @return string The cleaned doc block.
+   * @author Kevin Gomez <kevin_gomez@carpe-hora.com>
+   */
+  protected function cleanDocBlock($docBlock)
+  {
+    $docBlock = trim(str_replace(array('/**', '/*', '*/'), '', $docBlock));
+    return preg_replace('#^[ ]*\*[ ]*#m', '', $docBlock);
   }
 
   protected function parseDescription($description)

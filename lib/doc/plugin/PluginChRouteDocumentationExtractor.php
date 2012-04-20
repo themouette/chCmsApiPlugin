@@ -12,7 +12,7 @@
 /**
  * Class used extract documentation information from a route.
  */
-class PluginChRouteDocumentationExtractor implements chExtractorInterface
+class PluginChRouteDocumentationExtractor extends AbstractDocumentationExtractor implements chExtractorInterface
 {
   public function extract($route, $options = array())
   {
@@ -26,7 +26,7 @@ class PluginChRouteDocumentationExtractor implements chExtractorInterface
       'FORMAL_URL'        => $this->getFormalUrl($route),
       'SUPPORTED_FORMATS' => $this->getFormats($route),
       'DEFAULT_FORMAT'    => $this->getDefaultFormat($route),
-      'ROUTE_DESCRIPTION' => $this->getDescription($route),
+      'ROUTE_DESCRIPTION' => $this->getRouteDescription($route),
     );
   }
 
@@ -56,9 +56,37 @@ class PluginChRouteDocumentationExtractor implements chExtractorInterface
     return explode('|', $formats);
   }
 
-  protected function getDescription($route)
+  protected function getRouteDescription($route)
   {
     $options = $route->getOptions();
-    return empty($options['comment']) ? '' : $options['comment'];
+
+    // first, check if a comment has been given
+    if (!empty($options['comment']))
+    {
+      return $options['comment'];
+    }
+
+    // if not, check the action's docbloc
+    $defaults = $route->getDefaults();
+
+    // retrieve the action instance from the module and action name
+    try
+    {
+      $action = sfContext::getInstance()
+        ->getController()
+        ->getAction($defaults['module'], $defaults['action'], 'action');
+
+      $doc = $this->getDescriptionFromMethod($action, 'execute'.ucfirst($defaults['action']));
+      if (!empty($doc))
+      {
+        return $doc;
+      }
+    }
+    catch (Exception $e)
+    {
+    }
+
+    // nothing has been found
+    return '';
   }
 }

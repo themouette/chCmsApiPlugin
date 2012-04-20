@@ -14,19 +14,31 @@
  */
 class PluginChParamValidatorDocumentationExtractor extends AbstractDocumentationExtractor
 {
+  /**
+   * Tells if the current extractor supports/can extract data from the given
+   * object.
+   *
+   * @param mixed $object The object to test.
+   *
+   * @return bool True if the extract() method can be called, false otherwise.
+   */
+  public function supports($object)
+  {
+    $paramValidator = $this->createValidatorObject($object);
+    return $paramValidator instanceof chCmsApiParamValidator;
+  }
+
+  /**
+   * Extract documentation oriented data from the given object.
+   *
+   * @param mixed $object   The object to introspect.
+   * @param array $options  The extract options.
+   *
+   * @return array The extracted data.
+   */
   public function extract($paramValidator, $options = array())
   {
-    if (!$paramValidator)
-    {
-      return array();
-    }
-
     $paramValidator = $this->createValidatorObject($paramValidator);
-    if (!$paramValidator instanceof chCmsApiParamValidator)
-    {
-      return array();
-    }
-
     $params = array();
     foreach ($paramValidator->getValidatorSchema()->getFields() as $field => $validator)
     {

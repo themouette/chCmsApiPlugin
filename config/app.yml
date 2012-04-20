@@ -1,4 +1,6 @@
 all:
   chCmsApiPlugin:
-    docLayoutTemplate:  %sf_root_dir%/plugins/chCmsApiPlugin/data/templates/doc.html.php
-    docMethodTemplate:  %sf_root_dir%/plugins/chCmsApiPlugin/modules/apiDoc/templates/methodDocSuccess.php
+    docLayoutTemplate: %sf_root_dir%/plugins/chCmsApiPlugin/data/templates/doc.html.php
+    docMethodTemplate: %sf_root_dir%/plugins/chCmsApiPlugin/modules/apiDoc/templates/methodDocSuccess.php
+
+    descriptionParser: Markdown_Parser

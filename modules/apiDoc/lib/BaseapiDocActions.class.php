@@ -9,8 +9,12 @@
  */
 abstract class BaseapiDocActions extends sfActions
 {
+  protected $api_tools;
+
+
   public function preExecute()
   {
+    $this->api_tools = new chCmsApiTools();
     $this->setLayout(__DIR__.'/../templates/layout');
   }
 
@@ -21,10 +25,16 @@ abstract class BaseapiDocActions extends sfActions
    */
   public function executeListRoutes(sfWebRequest $request)
   {
-    $routes = $this->extractApiRoutes();
+    $routes = $this->api_tools->extractApiRoutes($this->context->getRouting());
+    $extractor = new chRouteDocumentationExtractor($this->getExtractorOptions(array(
+      'context' => $this->context
+    )));
+    $this->apiMethods = array();
 
-    $extractor = new chRouteDocumentationExtractor();
-    $this->apiMethods = $this->routesToApiData($routes, $extractor);
+    foreach ($routes as $id => $route)
+    {
+      $this->apiMethods[$id] = $extractor->extract($route);
+    }
   }
 
   /**
@@ -34,7 +44,7 @@ abstract class BaseapiDocActions extends sfActions
    */
   public function executeListFormatters(sfWebRequest $request)
   {
-    $this->formatters = $this->extractApiFormatters();
+    $this->formatters = $this->api_tools->extractApiFormatters();
   }
 
   /**
@@ -52,18 +62,23 @@ abstract class BaseapiDocActions extends sfActions
 
     // is the route public?
     $this->route = $routes[$this->route_name];
-    $this->forward404Unless($this->isApiMethodPublic($routes[$this->route_name]));
-    $options = $this->route->getOptions();
+    $this->forward404Unless($this->api_tools->isApiMethodPublic($this->route));
+    $route_options = $this->route->getOptions();
+
+    // extractors options
+    $options = $this->getExtractorOptions(array(
+      'context' => $this->context
+    ));
 
     // extract the data
     $extractor = new chDocumentationExtractor();
-    $extractor->registerExtractor('param_validator', new chParamValidatorDocumentationExtractor());
-    $extractor->registerExtractor('route', new chRouteDocumentationExtractor());
+    $extractor->registerExtractor('param_validator', new chParamValidatorDocumentationExtractor($options));
+    $extractor->registerExtractor('route', new chRouteDocumentationExtractor($options));
 
     try
     {
       $data = array_merge(
-        $extractor->extract($options['param_validator']),
+        $extractor->extract($route_options['param_validator']),
         $extractor->extract($this->route)
       );
     }
@@ -86,12 +101,10 @@ abstract class BaseapiDocActions extends sfActions
   public function executeFormatterDoc(sfWebRequest $request)
   {
     $this->formatter = $request->getParameter('formatter');
-    $this->forward404Unless(class_exists($this->formatter));
-    $this->forward404Unless($this->isFormatterValid($this->formatter));
+    $this->forward404Unless($this->api_tools->isFormatterValid($this->formatter));
 
     // extract the data
-    $extractor = new chDocumentationExtractor();
-    $extractor->registerExtractor('formatter', new chFormatterDocumentationExtractor());
+    $extractor = new chFormatterDocumentationExtractor($this->getExtractorOptions());
     try
     {
       $data = $extractor->extract($this->formatter);
@@ -119,107 +132,6 @@ abstract class BaseapiDocActions extends sfActions
   }
 
 
-  protected function routesToApiData($routes, chExtractorInterface $extractor)
-  {
-    $data = array();
-    foreach ($routes as $id => $route)
-    {
-      $data[$id] = $this->routeToApiData($route, $extractor);
-    }
-
-    return $data;
-  }
-
-  protected function routeToApiData($route, chExtractorInterface $extractor)
-  {
-    return $extractor->extract($route);
-  }
-
-  protected function extractApiRoutes()
-  {
-    $routes = array();
-    $routing = $this->context->getRouting();
-
-    foreach ($routing->getRoutes() as $id => $route)
-    {
-      $options = $route->getOptions();
-
-      if (empty($options['param_validator']) || !$this->isApiMethodPublic($route))
-      {
-        continue;
-      }
-
-      $routes[$id] = $route;
-    }
-
-    return $routes;
-  }
-
-  protected function isApiMethodPublic($route)
-  {
-    $options = $route->getOptions();
-    return !(array_key_exists('public_api', $options) && !$options['public_api']);
-  }
-
-  protected function extractApiFormatters()
-  {
-    $formatters = array();
-
-    $classes = sfFinder::type('file')
-      ->name('*Formatter{,.class}.php')
-      ->in(sfConfig::get('sf_root_dir'));
-    foreach ($classes as $file)
-    {
-      $class = explode(DIRECTORY_SEPARATOR, $file);
-      $class = explode('.', $class[count($class) - 1]);
-      $class = $class[0];
-
-      if (!$this->isFormatterValid($class))
-      {
-        continue;
-      }
-
-      $formatters[$class] = array();
-    }
-
-    ksort($formatters, SORT_LOCALE_STRING);
-
-    return $formatters;
-  }
-
-  /**
-   * Tells if a given formatter is valid (ie: can be displayed in the doc).
-   *
-   * @param string $formatter The formatter name.
-   *
-   * @return bool
-   * @author Kevin Gomez <kevin_gomez@carpe-hora.com>
-   */
-  protected function isFormatterValid($formatter)
-  {
-    // skip Plugin* classes
-    if (substr($formatter, 0, 6) === 'Plugin')
-    {
-      return false;
-    }
-
-    try
-    {
-      $rClass = new ReflectionClass($formatter);
-      // a formatter must inherit from BasechCmsApiFormatter
-      if ($rClass->isAbstract() || !$rClass->isSubclassOf('BasechCmsApiFormatter'))
-      {
-        return false;
-      }
-    }
-    catch (ReflectionException $e)
-    {
-      return false;
-    }
-
-    return true;
-  }
-
   /**
    * Expose the given array in the view
    *
@@ -231,5 +143,14 @@ abstract class BaseapiDocActions extends sfActions
     {
       $this->{$key} = $value;
     }
+  }
+
+  protected function getExtractorOptions($options = array())
+  {
+    $description_parser = sfConfig::get('app_chCmsApiPlugin_descriptionParser', 'Markdown_Parser');
+
+    return array_merge(array(
+      'description_parser' => new $description_parser
+    ), $options);
   }
 }

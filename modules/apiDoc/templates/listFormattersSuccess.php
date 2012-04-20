@@ -9,7 +9,7 @@
   </thead>
 
   <tbody>
-    <?php foreach ($formatters->getRawValue() as $class => $data): ?>
+    <?php foreach ($formatters as $class): ?>
     <tr>
       <td><?php echo link_to($class, 'api_formatter_doc', array('formatter' => $class)) ?></td>
 

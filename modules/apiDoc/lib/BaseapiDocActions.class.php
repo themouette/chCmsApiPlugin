@@ -69,7 +69,8 @@ abstract class BaseapiDocActions extends sfActions
     }
     catch (Exception $e)
     {
-      $this->forward404('Impossible to generate the documentation for the "'.$this->route.'" method.');
+      $this->getUser()->setFlash('error', 'Impossible to generate the documentation for the "'.$this->route_name.'" method.');
+      $this->redirect('api_methods');
     }
 
     // expose the extracted data to the template
@@ -97,7 +98,8 @@ abstract class BaseapiDocActions extends sfActions
     }
     catch (Exception $e)
     {
-      $this->forward404('Impossible to generate the documentation for the "'.$this->formatter.'" formatter.');
+      $this->getUser()->setFlash('error', 'Impossible to generate the documentation for the "'.$this->formatter.'" formatter.');
+      $this->redirect('api_formatters');
     }
 
     // expose the extracted data to the template

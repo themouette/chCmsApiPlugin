@@ -14,8 +14,8 @@
 
       <div class="nav-collapse">
         <ul class="nav">
-          <li><a href="<?php echo url_for('@apiMethods') ?>">Methods</a></li>
-          <li><a href="<?php echo url_for('@apiFormatters') ?>">Object Types</a></li>
+          <li><a href="<?php echo url_for('@api_methods') ?>">Methods</a></li>
+          <li><a href="<?php echo url_for('@api_formatters') ?>">Object Types</a></li>
           <li><a href="<?php echo url_for('@api_sandbox') ?>">Sandbox</a></li>
         </ul>
       </div>
@@ -24,6 +24,14 @@
 </div>
 
 <div class="container-fluid">
+  <?php if ($sf_user->hasFlash('notice')): ?>
+    <div class="alert alert-info"><?php echo $sf_user->getFlash('notice') ?></div>
+  <?php endif ?>
+
+  <?php if ($sf_user->hasFlash('error')): ?>
+    <div class="alert alert-error"><?php echo $sf_user->getFlash('error') ?></div>
+  <?php endif ?>
+
   <?php echo $sf_content ?>
 </div> <!-- /container -->
 </body>

@@ -31,8 +31,9 @@ class PluginChCmsParamLocationValidator extends chCmsValidatorApiBase
   protected function configure($options = array(), $messages = array())
   {
     parent::configure($options, $messages);
-    $this->addoption('min_length', 3);
-    $this->addoption('max_length', 255);
+    $this->addRequiredOption('geocoder');
+    $this->addOption('min_length', 3);
+    $this->addOption('max_length', 255);
     $this->setMessage('invalid', 'Invalid data "%message%".');
     $this->setMessage('required', 'You must provide a location.');
     $this->addMessage('server_error', 'geocoding server error "%message%".');
@@ -53,23 +54,15 @@ class PluginChCmsParamLocationValidator extends chCmsValidatorApiBase
 
       $value = $validator->clean($value);
 
+      $geocoder = $this->getOption('geocoder');
+
       try
       {
         // reverse geocode
-        $r = Geocoder::encode($value);
-
-        // extract first placemark
-        return array(
-          'lat'   => $r->results[0]->geometry->location->lat,
-          'long'  => $r->results[0]->geometry->location->lng);
+        return $geocoder->geocode($value);
       }
-      catch (GeocoderException $e)
+      catch (Exception $e)
       {
-        if ('ZERO_RESULTS' === $e->getGeocoderError())
-        {
-          throw new sfValidatorError($this, 'invalid', array('message' => $e->getMessage()));
-        }
-
         throw new sfValidatorError($this, 'server_error', array('message' => $e->getMessage()));
       }
 

@@ -59,11 +59,17 @@ class PluginChCmsParamLocationValidator extends chCmsValidatorApiBase
       try
       {
         // reverse geocode
-        return $geocoder->geocode($value);
+        $geocoded = $geocoder->geocode($value);
+
+        if ($geocoded->getLatitude() == 0 && $geocoded->getLongitude() == 0)
+        {
+          throw new sfValidatorError($this, 'invalid', array('message' => 'Can\'t find to given location'));
+        }
+        return $geocoded;
       }
       catch (Exception $e)
       {
-        throw new sfValidatorError($this, 'server_error', array('message' => $e->getMessage()));
+        throw new sfValidatorError($this, $e->getCode(), array('message' => $e->getMessage()));
       }
 
       return $value;

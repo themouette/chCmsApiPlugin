@@ -35,6 +35,7 @@ abstract class BaseapiDocActions extends sfActions
     {
       $this->apiMethods[$id] = $extractor->extract($route);
     }
+    ksort($this->apiMethods);
   }
 
   /**

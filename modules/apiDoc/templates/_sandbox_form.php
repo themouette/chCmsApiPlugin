@@ -38,6 +38,9 @@
 
       <div class="controls">
         <?php foreach ($default_parameters as $name => $value): ?>
+          <?php // don't show parameters which are in the URL ?>
+          <?php if (!empty($test_url) && strpos($test_url, ':'.$name) !== false) continue; ?>
+
           <p class="param_tuple">
             <input type="text" value="<?php echo $name ?>" placeholder="Name" class="key">
             <span> = </span>
@@ -45,7 +48,7 @@
             <i class="icon-minus-sign" style="cursor:pointer"></i>
           </p>
         <?php endforeach; ?>
-      
+
         <a href="#" class="btn" id="new_param_btn">
           <i class="icon-plus-sign"></i>
           New parameter

@@ -8,9 +8,15 @@ include dirname(__FILE__) . '/../../../../../test/bootstrap/unit.php';
 $t = new lime_test(10, new lime_output_color());
 
 $geocoder = new \Geocoder\Geocoder();
-$adapter = new \Geocoder\HttpAdapter\BuzzHttpAdapter();
-$provider = new ChCmsGoogleMapsProvider($adapter);
+$provider = new GeocoderDummyProvider();
 $geocoder->registerProvider($provider);
+
+$provider->data = array(
+  '12 rue des gras, 63000 Clermont ferrand' => array(
+    'latitude'  => 45.7787732,
+    'longitude' => 3.0845936,
+  )
+);
 
 $t->diag('test empty value');
 $v = new chCmsParamLocationValidator(array('required' => false, 'geocoder' => $geocoder));
@@ -30,8 +36,8 @@ catch (sfValidatorError $e)
 
 $t->diag('test valid value');
 $r = $v->clean("12 rue des gras, 63000 Clermont ferrand");
-$t->is($r->getLatitude(), '45.7787732');
-$t->is($r->getLongitude(), '3.0845936');
+$t->is($r->getLatitude(), 45.7787732, 'The latitude is correct');
+$t->is($r->getLongitude(), 3.0845936, 'The longitude is correct');
 
 $t->diag('test not valid value');
 try

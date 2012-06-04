@@ -96,6 +96,11 @@ class PluginChCmsApiTools
     $routes = array();
     foreach ($routing->getRoutes() as $id => $route)
     {
+      if (!is_object($route))
+      {
+        continue;
+      }
+
       $options = $route->getOptions();
 
       if (empty($options['param_validator']) || !$this->isApiMethodPublic($route))

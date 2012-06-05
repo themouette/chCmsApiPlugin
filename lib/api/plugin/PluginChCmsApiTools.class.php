@@ -96,9 +96,9 @@ class PluginChCmsApiTools
     $routes = array();
     foreach ($routing->getRoutes() as $id => $route)
     {
-      if (!is_object($route))
+      if (is_string($route))
       {
-        continue;
+        $route = unserialize($route);
       }
 
       $options = $route->getOptions();

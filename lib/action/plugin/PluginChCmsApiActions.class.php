@@ -54,7 +54,7 @@ abstract class PluginChCmsApiActions extends sfActions
     // set status code
     $response = $this->getResponse();
     $response->setStatusCode($statusCode);
-    $response->setApiResultContent($this->preprocessResult($result), $this->getRequest());
+    $response->setApiResultContent($this->preprocessResult($result), $this->getRequest(), $this);
     $response->send();
     throw new sfStopException();
   }

@@ -71,9 +71,9 @@ class PluginChCmsApiPluginResponse
    * @param sfRequest $request    the current request
    * @return sfResponse
    **/
-  public static function setApiResultContent($sf_response, $result, $request)
+  public static function setApiResultContent($sf_response, $result, $request, $action)
   {
-    $sf_response->setContent($sf_response->formatApiResultForRequest($result, $request));
+    $sf_response->setContent($sf_response->formatApiResultForRequest($result, $request, $action));
     return $sf_response;
   }
 
@@ -90,7 +90,7 @@ class PluginChCmsApiPluginResponse
    * @param sfRequest $request    the current request
    * @return String
    **/
-  public static function formatApiResultForRequest($sf_response, $result, $request)
+  public static function formatApiResultForRequest($sf_response, $result, $request, $action)
   {
     if (is_null($result))
     {
@@ -106,7 +106,7 @@ class PluginChCmsApiPluginResponse
 
     $formatted_results = call_user_func(
       array($sf_response, $method),
-      $result, $request, $doc_context
+      $result, $request, $doc_context, $action
     );
 
     if ($doc_context)

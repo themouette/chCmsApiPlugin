@@ -42,7 +42,7 @@ class PluginChCmsApiFilter extends sfFilter
       catch (chCmsApiErrorException $e)
       {
         $response->setStatusCode($e->getCode());
-        $response->setApiResultContent($this->getErrorArray($e), $request);
+        $response->setApiResultContent($this->getErrorArray($e), $request, $actionInstance);
       }
       catch (chCmsError401Exception $e)
       {
@@ -53,7 +53,7 @@ class PluginChCmsApiFilter extends sfFilter
             'code'    => 'INSUFFICIENT_CREDENTIAL',
             'message' => $e->getMessage()
                             ? $e->getMessage()
-                            : 'this ressource is protected') ), $request);
+                            : 'this ressource is protected') ), $request, $actionInstance);
         }
         else
         {
@@ -62,7 +62,7 @@ class PluginChCmsApiFilter extends sfFilter
             'code'    => 'AUTHENTICATION_REQUIRED',
             'message' => $e->getMessage()
                             ? $e->getMessage()
-                            : 'this ressource is protected') ), $request);
+                            : 'this ressource is protected') ), $request, $actionInstance);
         }
       }
 

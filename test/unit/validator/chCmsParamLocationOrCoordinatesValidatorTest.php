@@ -5,7 +5,7 @@
 
 include dirname(__FILE__) . '/../../bootstrap/unit.php';
 
-$t = new lime_test(10, new lime_output_color());
+$t = new lime_test(13, new lime_output_color());
 
 $t->diag('test empty value');
 $v = new chCmsParamLocationOrCoordinatesValidator();
@@ -55,6 +55,24 @@ $t->diag('test not valid value');
 try
 {
   $v->clean("%bad param%");
+  $t->fail('invalid data should throw an exception');
+}
+catch (sfValidatorError $e)
+{
+  $t->fail('invalid data throws an API error, validator error encountered');
+}
+catch (chCmsApiErrorException $e)
+{
+  $t->pass('invalid parameter throw an exception');
+  $t->is($e->getMessage(), 'You must provide a "baz" or a "bar" field.', 'exception embed expected message');
+  $t->is($e->getCode(), '400', 'exception embed expected code "400"');
+}
+try
+{
+  $v->clean(array(
+                'bar' => array('lat' => 19.134567, 'long' => -12.23456),
+                'baz' => array('lat' => 19.134567, 'long' => -12.23456)
+              ));
   $t->fail('invalid data should throw an exception');
 }
 catch (sfValidatorError $e)

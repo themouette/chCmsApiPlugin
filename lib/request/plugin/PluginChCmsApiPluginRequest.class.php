@@ -35,6 +35,17 @@ class PluginChCmsApiPluginRequest
     }
   }
 
+  public static function decodeJson(sfEvent $event)
+  {
+    $request = $event->getSubject();
+
+    if ($request->getContentType() === 'application/json')
+    {
+      $request->getParameterHolder()->add(json_decode($request->getContent(), true));
+      return true;
+    }
+  }
+
   /**
    * return the route param validator if any
    *

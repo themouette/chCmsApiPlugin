@@ -34,6 +34,9 @@ class PluginChCmsApiFilter extends sfFilter
         $response = $this->getContext()->getResponse();
         $request  = $this->getContext()->getRequest();
 
+        $event = new sfEvent($request, 'api.request.pre');
+        $this->context->getEventDispatcher()->notifyUntil($event);
+
         $response->setContentTypeForFormat($request->getRequestFormat());
 
         $filterChain->execute();

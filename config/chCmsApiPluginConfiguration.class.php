@@ -32,5 +32,9 @@ class chCmsApiPluginConfiguration extends sfPluginConfiguration
     $this->dispatcher->connect('routing.load_configuration', array(
       'chCmsApiPluginRouting', 'listenToRoutingLoadConfigurationEvent'
     ));
+
+    $this->dispatcher->connect('api.request.pre', array(
+      'chCmsApiPluginRequest', 'decodeJson'
+    ));
   }
 }
